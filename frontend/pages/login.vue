@@ -1,123 +1,108 @@
 <template>
-  <div class="container">
-    
-    <div class="left">
-      <h2 class="title">LOGIN</h2>
+  <div class="page-wrapper">
+    <div class="login-container">
+      <div class="left-side">
+        <h2 class="title">LOGIN</h2>
 
-      <div class="input-group">
         <label>Email</label>
-        <input
-          type="email"
-          v-model="email"
-          placeholder="aluno@aluno.unb.br"
-        />
-      </div>
+        <input type="email" placeholder="aluno@aluno.unb.br" />
 
-      <div class="input-group">
         <label>Senha</label>
-        <input
-          type="password"
-          v-model="senha"
-        />
+        <input type="password" placeholder="Password" />
+
+        <button class="btn">Entrar</button>
       </div>
 
-      <button class="btn" @click="login">Entrar</button>
+      <div class="right-side">
+        <h1>Bem vindo ao Camaar</h1>
+      </div>
     </div>
-
-    <div class="right">
-      <h1 class="welcome">
-        Bem vindo<br />
-        ao<br />
-        Camaar
-      </h1>
-    </div>
-
   </div>
 </template>
 
-<script setup>
-const email = ref("")
-const senha = ref("")
-
-const login = () => {
-  navigateTo("/avaliacoes")
-}
-</script>
-
 <style scoped>
-.container {
+.page-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  background: #f0f0f0; 
   display: flex;
-  height: 100vh;
-  background: #e5e5e5;
-  font-family: 'Inter', sans-serif;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 0;
 }
 
-.left {
-  width: 40%;
-  background: #fff;
-  padding: 60px;
+.login-container {
+  width: 780px;
+  height: 520px;
+  background: white;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 25px;
-  box-shadow: 2px 0 8px #00000015;
+  border-radius: 15px; 
+  overflow: hidden;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); 
+}
+
+.left-side {
+  flex: 1.2; 
+  padding: 50px;
+  display: flex; 
+  flex-direction: column; 
 }
 
 .title {
   text-align: center;
-  font-size: 20px;
-  margin-bottom: 20px;
-  font-weight: 600;
-  color: #333;
-}
-
-.input-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  margin-bottom: 30px;
+  font-weight: bold;
+  font-size: 24px;
+  align-self: center; 
 }
 
 label {
-  font-size: 14px;
-  font-weight: 500;
-  color: #444;
+  margin-top: 10px; 
+  margin-bottom: 5px;
+  font-size: 14px; 
 }
 
 input {
-  border: 1px solid #ddd;
-  padding: 10px 12px;
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px; 
+  border: 1px solid #ccc;
   border-radius: 6px;
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .btn {
-  background-color: #24b161; 
+  width: 100%;
+  background: #28a745;
+  padding: 14px;
   color: white;
-  padding: 12px;
   border: none;
   border-radius: 6px;
-  font-size: 15px;
+  font-size: 17px;
   cursor: pointer;
-  margin-top: 10px;
+  margin-top: 20px; 
 }
 
 .btn:hover {
-  background-color: #1e9a56;
+  background: #218838;
 }
 
-.right {
-  width: 60%;
-  background: #5c1a61; 
+.right-side {
+  flex: 1.8; 
+  background: #6C2365;
   color: white;
   display: flex;
+  flex-direction: column; 
   justify-content: center;
   align-items: center;
+  text-align: center;
+  padding: 20px;
 }
 
-.welcome {
-  font-size: 48px;
-  text-align: center;
-  line-height: 1.2;
-  font-weight: 600;
+.right-side h1 {
+  font-size: 44px; 
+  font-weight: bold;
+  line-height: 1.3; 
+  white-space: pre-wrap;
 }
 </style>
