@@ -1,7 +1,6 @@
 <template>
   <div class="container">
-
-    <!-- Lado esquerdo - Formulário -->
+    
     <div class="left">
       <h2 class="title">LOGIN</h2>
 
@@ -25,7 +24,6 @@
       <button class="btn" @click="login">Entrar</button>
     </div>
 
-    <!-- Lado direito - Boas vindas -->
     <div class="right">
       <h1 class="welcome">
         Bem vindo<br />
