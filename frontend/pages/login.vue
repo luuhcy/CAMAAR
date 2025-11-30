@@ -14,7 +14,7 @@
       </div>
 
       <div class="right-side">
-        <h1>Bem vindo ao Camaar</h1>
+        <h1>Bem vindo ao CAMAAR</h1>
       </div>
     </div>
   </div>
