@@ -1,5 +1,4 @@
 -- Criação do banco de dados CAMAAR v2
--- Sistema para avaliação de atividades acadêmicas remotas do CIC
 -- Baseado no diagrama ER fornecido
 
 -- Tabela de usuários (unifica docentes e discentes)
