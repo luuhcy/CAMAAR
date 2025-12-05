@@ -25,7 +25,7 @@
     </header>
 
     <div class="body-content">
-      <aside class="sidebar">
+      <aside class="sidebar" :class="{ 'sidebar-closed': !isSidebarOpen }">
         <nav>
           <ul>
             <li 
@@ -59,12 +59,9 @@ const props = defineProps({
 
 const emit = defineEmits(['menu-change']);
 
-// Itens de menu específicos do Administrador
 const menuItems = ref([
   { id: 'avaliacoes', nome: 'Avaliações' },
   { id: 'gerenciamento', nome: 'Gerenciamento' },
-  { id: 'relatorios', nome: 'Relatórios' },
-  { id: 'config', nome: 'Configurações' },
 ]);
 
 const activeItem = computed(() => {
@@ -84,7 +81,6 @@ const toggleDropdown = () => {
 </script>
 
 <style scoped>
-/* REUTILIZE O CSS DO SEU LAYOUT DE AVALIAÇÕES AQUI */
 * { box-sizing: border-box; }
 
 .layout-container {
