@@ -16,8 +16,8 @@
         </div>
         
         <div class="profile-area">
-          <div class="user-avatar">U</div>
-          <div class="dropdown-menu">
+          <div class="user-avatar" @click="toggleDropdown">U</div>
+          <div class="dropdown-menu" v-if="isDropdownOpen">
             <a href="#" class="logout-btn">Logout</a>
           </div>
         </div>
@@ -29,7 +29,6 @@
         <nav>
           <ul>
             <li class="active">Avaliações</li>
-            <li>Gerenciamento</li>
           </ul>
         </nav>
       </aside>
@@ -53,9 +52,14 @@
 import { ref } from 'vue';
 
 const isSidebarOpen = ref(false);
+const isDropdownOpen = ref(false);
 
 const toggleSidebar = () => {
   isSidebarOpen.value = !isSidebarOpen.value;
+};
+
+const toggleDropdown = () => {
+    isDropdownOpen.value = !isDropdownOpen.value;
 };
 
 const materias = [
@@ -162,7 +166,6 @@ body { margin: 0; }
   border: 1px solid #ddd;
   border-radius: 4px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  display: block; 
   min-width: 100px;
   z-index: 10;
 }
@@ -185,26 +188,22 @@ body { margin: 0; }
 }
 
 .sidebar {
-  width: 0; 
+  width: 180px; 
   background-color: white; 
   transition: width 0.3s ease;
-  overflow: hidden; 
+  overflow: hidden;
 }
 
 .sidebar-closed {
-  width: 0;
-  padding: 0;
-}
-
-.sidebar:not(.sidebar-closed) {
-    width: 180px; 
+  width: 0 !important;
+  padding: 0 !important;
 }
 
 nav ul { list-style: none; padding: 0; margin: 0; }
 nav li {
   padding: 15px 20px;
   cursor: pointer;
-  color: #333;
+  color: #333; 
   font-weight: 500;
   border-left: 5px solid transparent; 
   font-size: 16px;
@@ -228,8 +227,10 @@ nav li.active {
 
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(3, 300px); 
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
   gap: 25px;
+  width: 100%;
+  max-width: 1200px; 
 }
 
 .card {
@@ -241,6 +242,7 @@ nav li.active {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  cursor: pointer;
 }
 .card-content {
   display: flex;
