@@ -2,7 +2,10 @@
   <div class="page-wrapper">
     <div class="login-container">
       <div class="left-side">
-        <h2 class="title">LOGIN</h2>
+        <h2 class="title">CADASTRO</h2>
+
+        <label>Nome Completo</label>
+        <input type="text" placeholder="Nome" />
 
         <label>Email</label>
         <input type="email" placeholder="aluno@aluno.unb.br" />
@@ -10,12 +13,14 @@
         <label>Senha</label>
         <input type="password" placeholder="Password" />
 
-        <button class="btn">Entrar</button>
+        <label>Confirmar Senha</label>
+        <input type="password" placeholder="Password" />
 
+        <button class="btn">Finalizar Cadastro</button>
+        
         <p class="link-text">
-          Não tem uma conta? <NuxtLink to="/cadastro" class="router-link">Cadastre-se</NuxtLink>
+          Já tem uma conta? <NuxtLink to="/login" class="router-link">Fazer Login</NuxtLink>
         </p>
-
       </div>
 
       <div class="right-side">
@@ -24,6 +29,9 @@
     </div>
   </div>
 </template>
+
+<script setup>
+</script>
 
 <style scoped>
 .page-wrapper {
@@ -48,29 +56,29 @@
 
 .left-side {
   flex: 1.2; 
-  padding: 50px;
+  padding: 35px 50px; 
   display: flex; 
   flex-direction: column; 
 }
 
 .title {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px; 
   font-weight: bold;
   font-size: 24px;
   align-self: center; 
 }
 
 label {
-  margin-top: 10px; 
-  margin-bottom: 5px;
+  margin-top: 5px; 
+  margin-bottom: 3px; 
   font-size: 14px; 
 }
 
 input {
   width: 100%;
-  padding: 12px;
-  margin-bottom: 15px; 
+  padding: 10px; 
+  margin-bottom: 8px; 
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 15px;
@@ -85,7 +93,7 @@ input {
   border-radius: 6px;
   font-size: 17px;
   cursor: pointer;
-  margin-top: 20px; 
+  margin-top: 15px; 
 }
 
 .btn:hover {
@@ -113,7 +121,7 @@ input {
 
 .link-text {
   text-align: center;
-  margin-top: 15px;
+  margin-top: 5px; 
   font-size: 14px;
 }
 
