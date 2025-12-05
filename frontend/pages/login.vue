@@ -4,17 +4,19 @@
       <div class="left-side">
         <h2 class="title">LOGIN</h2>
 
-        <label>Email</label>
-        <input type="email" placeholder="aluno@aluno.unb.br" />
-
         <label>Senha</label>
+        <input type="email" placeholder="admin@aluno.unb.br" />
+
+        <label>Confirme a senha</label>
         <input type="password" placeholder="Password" />
 
-        <button class="btn">Entrar</button>
+        <button class="btn" @click="$router.push('/dashboard')">Alterar senha</button>
       </div>
 
       <div class="right-side">
-        <h1>Bem vindo ao CAMAAR</h1>
+        <h1>Bem vindo
+ao
+Camaar</h1>
       </div>
     </div>
   </div>
