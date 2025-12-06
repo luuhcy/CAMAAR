@@ -63,7 +63,8 @@ const handleLogin = async () => {
             if (response.user.tipo === 'admin') {
                 await navigateTo('/admin');
             } else {
-                await navigateTo('/dashboard');
+                // CORREÇÃO AQUI: Garante que o usuário vá para /avaliacoes
+                await navigateTo('/avaliacoes'); 
             }
         }
 
