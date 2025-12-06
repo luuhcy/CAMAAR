@@ -4,22 +4,17 @@
       <div class="left-side">
         <h2 class="title">LOGIN</h2>
 
-        <label>Senha</label>
+        <label>Email</label>
         <input type="email" placeholder="admin@aluno.unb.br" />
 
-        <label>Confirme a senha</label>
+        <label>Senha</label>
         <input type="password" placeholder="Password" />
 
-<<<<<<< HEAD
-        <button class="btn" @click="$router.push('/dashboard')">Alterar senha</button>
-=======
         <button class="btn">Entrar</button>
 
         <p class="link-text">
           Não tem uma conta? <NuxtLink to="/cadastro" class="router-link">Cadastre-se</NuxtLink>
         </p>
-
->>>>>>> 5745c80b129f9e2c090e1864024cbefbaac85725
       </div>
 
       <div class="right-side">
