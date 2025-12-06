@@ -19,6 +19,16 @@ const router = useRouter();
 
 const handleAction = (action) => {
   console.log('Ação selecionada:', action);
+  
+  if (action === 'editar_templates') {
+    router.push('/admin/templates/edit');
+  } else if (action === 'importar') {
+    router.push('/admin/importar');
+  } else if (action === 'resultados') {
+    router.push('/admin/resultados');
+  } else if (action === 'enviar_formularios') {
+    alert('E-mails de avaliação foram enviados a todos os dicentes das turmas importadas!');
+  }
 };
 </script>
 

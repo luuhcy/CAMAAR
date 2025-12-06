@@ -18,7 +18,7 @@
         <div class="profile-area">
           <div class="user-avatar" @click="toggleDropdown">A</div>
           <div class="dropdown-menu" v-if="isDropdownOpen">
-            <a href="#" class="logout-btn">Logout Admin</a>
+            <a href="#" class="logout-btn" @click.prevent="handleLogout">Logout Admin</a>
           </div>
         </div>
       </div>
@@ -32,7 +32,7 @@
               v-for="item in menuItems" 
               :key="item.id"
               :class="{ 'active': activeItem.id === item.id }"
-              @click="$emit('menu-change', item.id)"
+              @click="handleMenuClick(item.id)"
             >
               {{ item.nome }}
             </li>
@@ -49,6 +49,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 
 const props = defineProps({
   activeMenuId: {
@@ -58,6 +59,8 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['menu-change']);
+const router = useRouter();
+const route = useRoute();
 
 const menuItems = ref([
   { id: 'avaliacoes', nome: 'Avaliações' },
@@ -77,6 +80,20 @@ const toggleSidebar = () => {
 
 const toggleDropdown = () => {
     isDropdownOpen.value = !isDropdownOpen.value;
+};
+
+const handleLogout = () => {
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('userRole');
+    router.push('/login');
+};
+
+const handleMenuClick = (id) => {
+    emit('menu-change', id);
+    
+    if (route.path !== '/admin') {
+        router.push('/admin');
+    }
 };
 </script>
 

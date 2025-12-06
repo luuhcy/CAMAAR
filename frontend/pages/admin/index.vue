@@ -7,9 +7,6 @@
       
       <GerenciamentoDeUsuarios v-else-if="activeId === 'gerenciamento'" />
       
-      <NovoComponenteLateral v-else-if="activeId === 'relatorios'" />
-      <NovoComponenteLateral v-else-if="activeId === 'config'" />
-
       <div v-else class="fallback-message">
         <p>Selecione uma opção no menu lateral para iniciar o gerenciamento.</p>
       </div>
@@ -19,11 +16,9 @@
 
 <script setup>
 import { ref } from 'vue';
-
 import AdminLayout from '~/components/AdminLayout.vue';
 import ListaDeCards from '~/components/ListaDeCards.vue'; 
 import GerenciamentoDeUsuarios from '~/components/GerenciamentoDeUsuarios.vue'; 
-import NovoComponenteLateral from '~/components/NovoComponenteLateral.vue';
 
 const activeMenuId = ref('avaliacoes'); 
 
@@ -31,11 +26,9 @@ const changeMenu = (id) => {
   activeMenuId.value = id;
 };
 
-
-// DESCOMENTAR isto para ativar a segurança do Admin quando for para produção.
-// definePageMeta({
-//   middleware: ['admin'] 
-// });
+definePageMeta({
+  middleware: ['admin'] 
+});
 </script>
 
 <style scoped>

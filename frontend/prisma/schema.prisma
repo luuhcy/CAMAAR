@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             Int          @id @default(autoincrement())
+  email          String       @unique
+  matricula      String       @unique
+  nome           String
+  password       String
+  tipo           String       @default("user")
+
+  templates      Template[]
+  respostas      Resposta[]
+}
+
+model Template {
+  id             Int          @id @default(autoincrement())
+  nome           String
+  descricao      String?
+  dataCriacao    DateTime     @default(now())
+
+  idUsuario      Int
+  usuario        User         @relation(fields: [idUsuario], references: [id])
+
+  questoes       Questao[]
+  formularios    Formulario[]
+}
+
+model Questao {
+  id             Int          @id @default(autoincrement())
+  texto          String
+  tipo           String
+  obrigatoria    Boolean      @default(true)
+  ordem          Int
+  opcoes         String?
+
+  templateId     Int
+  template       Template     @relation(fields: [templateId], references: [id])
+}
+
+model Turma {
+  id             Int          @id @default(autoincrement())
+  codigoSigaa    String
+  nome           String
+  disciplina     String
+  semestre       String
+  ano            Int
+  
+  discentes      Student[]
+  formularios    Formulario[]
+
+  @@unique([disciplina, semestre, ano, nome])
+}
+
+model Student {
+  id             Int          @id @default(autoincrement())
+  name           String
+  matricula      String       @unique
+  email          String
+  
+  turmaId        Int
+  turma          Turma        @relation(fields: [turmaId], references: [id])
+}
+
+
+model Formulario {
+  id             Int          @id @default(autoincrement())
+  titulo         String
+  dataInicio     DateTime
+  dataTermino    DateTime
+  
+  templateId     Int
+  template       Template     @relation(fields: [templateId], references: [id])
+  
+  turmaId        Int
+  turma          Turma        @relation(fields: [turmaId], references: [id])
+
+  respostas      Resposta[]
+}
+
+model Resposta {
+  id             Int          @id @default(autoincrement())
+  dataResposta   DateTime     @default(now())
+  status         String
+  
+  usuarioId      Int
+  usuario        User         @relation(fields: [usuarioId], references: [id])
+  
+  formularioId   Int
+  formulario     Formulario   @relation(fields: [formularioId], references: [id])
+}

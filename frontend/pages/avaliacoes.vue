@@ -18,7 +18,7 @@
         <div class="profile-area">
           <div class="user-avatar" @click="toggleDropdown">U</div>
           <div class="dropdown-menu" v-if="isDropdownOpen">
-            <a href="#" class="logout-btn">Logout</a>
+            <a href="#" class="logout-btn" @click.prevent="handleLogout">Logout</a>
           </div>
         </div>
       </div>
@@ -35,7 +35,12 @@
     
       <main class="main-content-area">
         <div class="grid-container">
-          <div v-for="materia in materias" :key="materia.id" class="card">
+          <div 
+            v-for="materia in materias" 
+            :key="materia.id" 
+            class="card"
+            @click="openAvaliacao(materia.id)"
+          >
             <div class="card-content">
               <h3 class="subject-name">{{ materia.nome }}</h3>
               <span class="semestre">{{ materia.semestre }}</span>
@@ -50,7 +55,13 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
+definePageMeta({
+  middleware: ['auth'] 
+});
+
+const router = useRouter();
 const isSidebarOpen = ref(false);
 const isDropdownOpen = ref(false);
 
@@ -62,12 +73,22 @@ const toggleDropdown = () => {
     isDropdownOpen.value = !isDropdownOpen.value;
 };
 
+const handleLogout = () => {
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('userRole');
+    router.push('/login');
+};
+
+const openAvaliacao = (id) => {
+    router.push(`/formulario/${id}`);
+};
+
 const materias = [
-  { id: 1, nome: "Nome da matéria", semestre: "semestre", professor: "Professor" },
-  { id: 2, nome: "Nome da matéria", semestre: "semestre", professor: "Professor" },
-  { id: 3, nome: "Nome da matéria", semestre: "semestre", professor: "Professor" },
-  { id: 4, nome: "Nome da matéria", semestre: "semestre", professor: "Professor" },
-  { id: 5, nome: "Nome da matéria", semestre: "semestre", professor: "Professor" }
+  { id: 1, nome: "Introdução à Computação", semestre: "2023.2", professor: "Prof. Silva" },
+  { id: 2, nome: "Cálculo I", semestre: "2024.1", professor: "Prof. Souza" },
+  { id: 3, nome: "Algoritmos", semestre: "2024.1", professor: "Prof. Santos" },
+  { id: 4, nome: "Estrutura de Dados", semestre: "2023.2", professor: "Prof. Oliveira" },
+  { id: 5, nome: "Redes de Computadores", semestre: "2024.1", professor: "Prof. Costa" }
 ];
 </script>
 
