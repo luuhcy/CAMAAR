@@ -9,28 +9,15 @@
         <label>Email</label>
         <input type="email" placeholder="aluno@unb.br" v-model="email" />
 
-<<<<<<< HEAD
-        <label>Email</label>
-        <input type="email" placeholder="admin@aluno.unb.br" />
-
-        <label>Senha</label>
-        <input type="password" placeholder="Password" />
-
-        <button class="btn">Entrar</button>
-=======
         <label>Senha</label>
         <input type="password" placeholder="Password" v-model="password" />
 
         <button class="btn" @click="handleLogin">Entrar</button>
->>>>>>> e40b84ccf14988b88f05656b37560c41d7adfea1
 
         <p class="link-text">
           Não tem uma conta? <NuxtLink to="/cadastro" class="router-link">Cadastre-se</NuxtLink>
         </p>
-<<<<<<< HEAD
-=======
 
->>>>>>> e40b84ccf14988b88f05656b37560c41d7adfea1
       </div>
 
       <div class="right-side">
@@ -55,6 +42,7 @@ const loginError = ref('');
 const handleLogin = async () => {
     loginError.value = '';
 
+    // Lógica simples baseada no LocalStorage (Mock)
     const users = JSON.parse(localStorage.getItem('users') || '[]');
     
     const foundUser = users.find(user => 

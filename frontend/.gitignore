@@ -23,4 +23,6 @@ logs
 .env.*
 !.env.example
 
-/generated/prisma
+# Database (Ignora arquivos de banco de dados)
+*.db
+/prisma/*.db
