@@ -6,13 +6,15 @@
         
         <div v-if="loginError" class="error-message">{{ loginError }}</div>
 
-        <label>Email</label>
-        <input type="email" placeholder="aluno@unb.br" v-model="email" />
+        <form @submit.prevent="handleLogin">
+          <label>Email</label>
+          <input type="email" placeholder="aluno@unb.br" v-model="email" required />
 
-        <label>Senha</label>
-        <input type="password" placeholder="Password" v-model="password" />
+          <label>Senha</label>
+          <input type="password" placeholder="Password" v-model="password" required />
 
-        <button class="btn" @click="handleLogin">Entrar</button>
+          <button class="btn" type="submit">Entrar</button>
+        </form>
 
         <p class="link-text">
           Não tem uma conta? <NuxtLink to="/cadastro" class="router-link">Cadastre-se</NuxtLink>
@@ -32,6 +34,7 @@ CAMAAR</h1>
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { navigateTo } from '#app';
 
 const router = useRouter();
 
@@ -42,41 +45,30 @@ const loginError = ref('');
 const handleLogin = async () => {
     loginError.value = '';
 
-    // Lógica simples baseada no LocalStorage (Mock)
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    
-    const foundUser = users.find(user => 
-        user.email === email.value && user.password === password.value
-    );
-
-    if (foundUser) {
-        
-        localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('userRole', foundUser.role);
-        
-        try {
-            console.log('Login OK. Role:', foundUser.role);
-            
-            if (foundUser.role === 'admin') {
-                // Redireciona o ADMIN
-                router.push('/admin'); 
-            } else {
-                // Redireciona o USUÁRIO NORMAL
-                router.push('/avaliacoes'); 
+    try {
+        const response = await $fetch('/api/auth/login', {
+            method: 'POST',
+            body: {
+                email: email.value,
+                password: password.value,
             }
-
-        } catch (error) {
-            console.error('Falha ao carregar dados do usuário:', error);
-            // Em caso de falha na API simulada, ainda redireciona para não travar o fluxo
-            if (foundUser.role === 'admin') {
-                router.push('/admin'); 
+        });
+        
+        if (response && response.success) {
+            
+            localStorage.setItem('isAuthenticated', 'true');
+            localStorage.setItem('userEmail', response.user.email);
+            localStorage.setItem('userRole', response.user.tipo);
+            
+            if (response.user.tipo === 'admin') {
+                await navigateTo('/admin');
             } else {
-                router.push('/avaliacoes'); 
+                await navigateTo('/dashboard');
             }
         }
 
-    } else {
-        loginError.value = 'Email ou senha inválidos. Verifique suas credenciais ou cadastre-se.';
+    } catch (e) {
+        loginError.value = e.data?.statusMessage || 'Falha ao conectar ao servidor.';
     }
 };
 </script>
