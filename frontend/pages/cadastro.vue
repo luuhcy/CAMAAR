@@ -4,19 +4,21 @@
       <div class="left-side">
         <h2 class="title">CADASTRO</h2>
 
+        <div v-if="error" class="error-message">{{ error }}</div>
+        
         <label>Nome Completo</label>
-        <input type="text" placeholder="Nome" />
+        <input type="text" placeholder="Nome" v-model="name" />
 
         <label>Email</label>
-        <input type="email" placeholder="aluno@aluno.unb.br" />
+        <input type="email" placeholder="aluno@aluno.unb.br" v-model="email" />
 
         <label>Senha</label>
-        <input type="password" placeholder="Password" />
+        <input type="password" placeholder="Password" v-model="password" />
 
         <label>Confirmar Senha</label>
-        <input type="password" placeholder="Password" />
+        <input type="password" placeholder="Password" v-model="confirmPassword" />
 
-        <button class="btn">Finalizar Cadastro</button>
+        <button class="btn" @click="handleCadastro">Finalizar Cadastro</button>
         
         <p class="link-text">
           Já tem uma conta? <NuxtLink to="/login" class="router-link">Fazer Login</NuxtLink>
@@ -31,6 +33,72 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const name = ref('');
+const email = ref('');
+const password = ref('');
+const confirmPassword = ref('');
+const error = ref('');
+
+const setupInitialAdmin = () => {
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    const adminExists = users.some(user => user.role === 'admin');
+
+    if (!adminExists) {
+        users.unshift({
+            id: Date.now() + 1,
+            name: 'Admin do Sistema',
+            email: 'admin@unb.br', 
+            password: 'admin', 
+            role: 'admin' 
+        });
+        localStorage.setItem('users', JSON.stringify(users));
+    }
+};
+
+const handleCadastro = () => {
+    error.value = '';
+
+    if (!name.value || !email.value || !password.value || !confirmPassword.value) {
+        error.value = 'Preencha todos os campos.';
+        return;
+    }
+
+    if (password.value !== confirmPassword.value) {
+        error.value = 'As senhas não coincidem.';
+        return;
+    }
+
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    const emailExists = users.some(user => user.email === email.value);
+
+    if (emailExists) {
+        error.value = 'Este email já está cadastrado.';
+        return;
+    }
+
+    const newUser = {
+        id: Date.now(),
+        name: name.value,
+        email: email.value,
+        password: password.value, 
+        role: 'user'
+    };
+
+    users.push(newUser);
+    localStorage.setItem('users', JSON.stringify(users));
+    
+    alert('Cadastro realizado com sucesso! Faça login.');
+    router.push('/login'); 
+};
+
+onMounted(() => {
+    setupInitialAdmin();
+});
 </script>
 
 <style scoped>
@@ -56,17 +124,24 @@
 
 .left-side {
   flex: 1.2; 
-  padding: 35px 50px; 
+  padding: 50px;
   display: flex; 
   flex-direction: column; 
 }
 
 .title {
   text-align: center;
-  margin-bottom: 20px; 
+  margin-bottom: 30px;
   font-weight: bold;
   font-size: 24px;
   align-self: center; 
+}
+
+.error-message {
+  color: red;
+  margin-bottom: 10px;
+  font-size: 14px;
+  text-align: center;
 }
 
 label {
