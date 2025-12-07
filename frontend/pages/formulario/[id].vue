@@ -11,27 +11,53 @@
 
     <main class="content-area">
       
-      <div class="form-paper">
-        
-        <div v-for="(pergunta, index) in perguntas" :key="index" class="question-block">
-          
-          <h3 class="question-title">{{ pergunta.titulo }}</h3>
+      <div v-if="loading" class="loading-message">
+        <p>Carregando dados da turma...</p>
+      </div>
 
-          <div v-if="pergunta.tipo === 'multipla_escolha'" class="options-list">
-            <label v-for="opcao in pergunta.opcoes" :key="opcao" class="radio-option">
-              <input type="radio" :name="'pergunta-' + index" v-model="respostas[index]" :value="opcao" />
-              <span class="radio-label">{{ opcao }}</span>
-            </label>
+      <div v-else-if="submitError" class="error-message">
+        {{ submitError }}
+      </div>
+
+      <div v-else class="data-and-form">
+          <div v-if="alunos.length > 0" class="aluno-list-paper form-paper">
+              <h2>Lista de Dicentes ({{ alunos.length }} alunos)</h2>
+              <table class="alunos-table">
+                  <thead>
+                      <tr>
+                          <th>Nome</th>
+                          <th>Matrícula</th>
+                          <th>Email</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <tr v-for="aluno in alunos" :key="aluno.matricula">
+                          <td>{{ aluno.nome }}</td>
+                          <td>{{ aluno.matricula }}</td>
+                          <td>{{ aluno.email }}</td>
+                      </tr>
+                  </tbody>
+              </table>
           </div>
 
-          <div v-if="pergunta.tipo === 'texto'" class="text-input-area">
-            <input type="text" placeholder="Escreva aqui..." class="line-input" v-model="respostas[index]" />
+          <div class="form-paper evaluation-form">
+            <div v-for="(pergunta, index) in perguntas" :key="index" class="question-block">
+              
+              <h3 class="question-title">{{ pergunta.titulo }}</h3>
+
+              <div v-if="pergunta.tipo === 'multipla_escolha'" class="options-list">
+                <label v-for="opcao in pergunta.opcoes" :key="opcao" class="radio-option">
+                  <input type="radio" :name="'pergunta-' + index" v-model="respostas[index]" :value="opcao" />
+                  <span class="radio-label">{{ opcao }}</span>
+                </label>
+              </div>
+
+              <div v-if="pergunta.tipo === 'texto'" class="text-input-area">
+                <input type="text" placeholder="Escreva aqui..." class="line-input" v-model="respostas[index]" />
+              </div>
+
+            </div>
           </div>
-
-        </div>
-        
-        <p v-if="submitError" class="error-message">{{ submitError }}</p>
-
       </div>
 
     </main>
@@ -60,6 +86,8 @@ const materiaNome = ref('...');
 const materiaSemestre = ref('...');
 const submitError = ref('');
 const respostas = ref({});
+const alunos = ref([]);
+const loading = ref(true);
 
 const perguntas = ref([
   {
@@ -82,10 +110,22 @@ const perguntas = ref([
   }
 ]);
 
+const loadMateriaData = async (turmaId) => {
+    loading.value = true;
+    try {
+        const response = await $fetch(`/api/turma/${turmaId}`); 
+        
+        materiaNome.value = response.turma.code; 
+        materiaSemestre.value = response.turma.semester;
+        
+        alunos.value = response.turma.dicente;
 
-const loadMateriaData = (id) => {
-    materiaNome.value = `Matéria ID ${id}`;
-    materiaSemestre.value = `2024.1`;
+    } catch (e) {
+        materiaNome.value = 'Erro de Carregamento';
+        submitError.value = e.data?.statusMessage || 'Falha ao buscar dados da turma.';
+    } finally {
+        loading.value = false;
+    }
 };
 
 const submitForm = () => {
@@ -107,7 +147,7 @@ const submitForm = () => {
 };
 
 const goBack = () => {
-    router.push('/avaliacoes');
+    router.push('/admin'); 
 };
 
 onMounted(() => {
@@ -165,18 +205,60 @@ onMounted(() => {
 .content-area {
   flex: 1;
   display: flex;
-  justify-content: center;
+  flex-direction: column; 
+  align-items: center;
   overflow-y: auto;
   padding: 40px 20px;
+}
+
+.data-and-form {
+    width: 100%;
+    max-width: 800px;
 }
 
 .form-paper {
   background-color: white;
   width: 100%;
-  max-width: 800px;
   padding: 30px;
   border-radius: 4px;
   height: fit-content;
+  margin-bottom: 20px; 
+}
+
+.evaluation-form {
+    padding-top: 20px;
+    border-top: 1px dashed #ccc;
+}
+
+.loading-message {
+    text-align: center;
+    padding: 50px;
+    font-size: 1.2rem;
+}
+
+.aluno-list-paper h2 {
+    font-size: 1.2rem;
+    margin-top: 0;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.alunos-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 0.9rem;
+}
+
+.alunos-table th, .alunos-table td {
+    border: 1px solid #eee;
+    padding: 10px;
+    text-align: left;
+}
+
+.alunos-table th {
+    background-color: #f5f5f5;
+    font-weight: 600;
 }
 
 .question-block {
