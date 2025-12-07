@@ -1,7 +1,7 @@
 <template>
     <AdminLayout active-menu-id="gerenciamento">
         <div class="import-container">
-            <h1 class="page-header">📥 Importar Dados</h1>
+            <h1 class="page-header">Importar Dados</h1>
             <p class="subtitle">Faça o upload do arquivo CSV com as novas informações de turmas, professores e avaliações.</p>
             
             <div class="import-card">
@@ -89,40 +89,34 @@ const processFile = (file) => {
     }
 };
 
-const submitImport = () => {
-    if (selectedFile.value) {
-        statusMessage.value = 'Processando e salvando dados da turma...';
-        statusType.value = 'info';
-        
-        // 💡 DADOS DE SIMULAÇÃO (A estrutura que você forneceu)
-        const importedData = [{
-            "code": "CIC0097",
-            "classCode": "TA",
-            "semester": "2021.2",
-            "dicente": [ 
-                { "nome": "Ana Clara Jordao Perna", "curso": "CIÊNCIA DA COMPUTAÇÃO/CIC", "matricula": "190084006", "email": "acjpjvjp@gmail.com" },
-                { "nome": "Andre Carvalho de Roure", "curso": "CIÊNCIA DA COMPUTAÇÃO/CIC", "matricula": "200033522", "email": "andreCarvalhoroure@gmail.com" },
-                // ... mais alunos aqui ...
-            ],
-            "docente": {
-                "nome": "MARISTELA TERTO DE HOLANDA",
-                "departamento": "DEPTO CIÊNCIAS DA COMPUTAÇÃO",
-                "email": "mholanda@unb.br"
-            }
-        }];
-        
-        const existingClasses = JSON.parse(localStorage.getItem('turmas') || '[]');
-        existingClasses.push(importedData[0]); 
-        localStorage.setItem('turmas', JSON.stringify(existingClasses));
+const submitImport = async () => {
+    if (!selectedFile.value) {
+        statusMessage.value = 'Nenhum arquivo selecionado.';
+        statusType.value = 'error';
+        return;
+    }
+    
+    statusMessage.value = 'Enviando e processando arquivo no servidor...';
+    statusType.value = 'info';
 
-        // Simulação de tempo de importação
-        setTimeout(() => {
-            statusMessage.value = `Sucesso! Turma ${importedData[0].code}-${importedData[0].classCode} importada e salva no sistema.`;
-            statusType.value = 'success';
-            selectedFile.value = null;
-            fileName.value = '';
-            fileSize.value = '';
-        }, 1000);
+    try {
+        const formData = new FormData();
+        formData.append('csvFile', selectedFile.value);
+
+        const response = await $fetch('/api/admin/importar', {
+            method: 'POST',
+            body: formData,
+        });
+        
+        statusMessage.value = response.message || `Sucesso! Importação concluída.`;
+        statusType.value = 'success';
+        selectedFile.value = null;
+        fileName.value = '';
+        fileSize.value = '';
+        
+    } catch (e) {
+        statusMessage.value = e.data?.message || e.message || 'Erro interno ao processar o arquivo CSV.';
+        statusType.value = 'error';
     }
 };
 
