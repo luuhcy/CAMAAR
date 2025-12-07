@@ -1,6 +1,4 @@
-// server/api/admin/importar.post.js
-
-import { prisma } from '../../utils/db'; 
+import { prisma } from '../../utils/db';
 import csv from 'csv-parser';
 import { Readable } from 'stream';
 
@@ -49,7 +47,6 @@ export default defineEventHandler(async (event) => {
         
         const ano = parseInt(semestre.split('.')[0]); 
 
-        // 1. CRIA OU ATUALIZA A TURMA
         const turma = await prisma.turma.upsert({
             where: {
                 disciplina_semestre_ano_nome: {
@@ -94,7 +91,7 @@ export default defineEventHandler(async (event) => {
         
         return {
             success: true,
-            message: `Sucesso! Turma ${turma.nome} (${turma.disciplina}) e ${data.length} dicentes importados.`,
+            message: `Sucesso! Base de dados atualizada. Turma ${turma.nome} (${turma.disciplina}) e ${data.length} dicentes processados.`,
         };
 
     } catch (error) {
