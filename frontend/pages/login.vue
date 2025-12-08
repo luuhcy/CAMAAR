@@ -43,34 +43,36 @@ const password = ref('');
 const loginError = ref('');
 
 const handleLogin = async () => {
-    loginError.value = '';
+  loginError.value = '';
 
-    try {
-        const response = await $fetch('/api/auth/login', {
-            method: 'POST',
-            body: {
-                email: email.value,
-                password: password.value,
-            }
-        });
-        
-        if (response && response.success) {
-            
-            localStorage.setItem('isAuthenticated', 'true');
-            localStorage.setItem('userEmail', response.user.email);
-            localStorage.setItem('userRole', response.user.tipo);
-            
-            if (response.user.tipo === 'admin') {
-                await navigateTo('/admin');
-            } else {
-                // CORREÇÃO AQUI: Garante que o usuário vá para /avaliacoes
-                await navigateTo('/avaliacoes'); 
-            }
-        }
+  try {
+    // Agora chamamos o RAILS na porta 3001
+    const response = await $fetch('http://localhost:3001/login', {
+      method: 'POST',
+      body: {
+        email: email.value,
+        password: password.value
+      }
+    });
 
-    } catch (e) {
-        loginError.value = e.data?.statusMessage || 'Falha ao conectar ao servidor.';
+    // Se chegou aqui, o login deu certo!
+    console.log('Login Sucesso:', response);
+
+    // Salva os dados para o site saber que está logado
+    localStorage.setItem('isAuthenticated', 'true');
+    localStorage.setItem('userRole', response.user.tipo); // 'admin' ou 'user'
+
+    // Redireciona
+    if (response.user.tipo === 'admin') {
+      router.push('/admin');
+    } else {
+      router.push('/avaliacoes');
     }
+
+  } catch (err) {
+    console.error(err);
+    loginError.value = 'Email ou senha incorretos.';
+  }
 };
 </script>
 
