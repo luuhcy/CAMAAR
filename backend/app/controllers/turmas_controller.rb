@@ -10,7 +10,7 @@ class TurmasController < ApplicationController
 
   # GET /turmas/1
   def show
-    render json: @turma
+    render json: @turma, include: :students
   end
 
   # POST /turmas

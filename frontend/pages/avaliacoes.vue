@@ -61,7 +61,7 @@ const isSidebarOpen = ref(false);
 const isDropdownOpen = ref(false);
 
 // BUSCA OS DADOS DO BANCO DE DADOS
-const { data: turmas, pending, error } = await useFetch('/api/turmas', {
+const { data: turmas, pending, error } = await useFetch('http://localhost:3001/turmas', {
     default: () => [] 
 });
 
