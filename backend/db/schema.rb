@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_08_004732) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_08_233230) do
   create_table "formularios", force: :cascade do |t|
     t.string "titulo"
     t.datetime "data_inicio"
@@ -23,7 +23,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_08_004732) do
     t.index ["turma_id"], name: "index_formularios_on_turma_id"
   end
 
-  create_table "questoes", force: :cascade do |t|
+  create_table "questaos", force: :cascade do |t|
     t.string "texto"
     t.string "tipo"
     t.boolean "obrigatoria"
@@ -74,6 +74,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_08_004732) do
     t.integer "ano"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["codigo_sigaa", "semestre"], name: "index_turmas_on_codigo_sigaa_and_semestre", unique: true
   end
 
   create_table "users", force: :cascade do |t|

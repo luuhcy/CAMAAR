@@ -103,7 +103,7 @@ const submitImport = async () => {
         const formData = new FormData();
         formData.append('csvFile', selectedFile.value);
 
-        const response = await $fetch('/api/admin/importar', {
+        const response = await $fetch('http://localhost:3001/admin/importar', {
             method: 'POST',
             body: formData,
         });

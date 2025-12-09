@@ -2,6 +2,7 @@
 
 # Limpar dados na ordem correta (respeitar foreign keys)
 Template.destroy_all
+Student.destroy_all
 Turma.destroy_all
 
 # Agora pode deletar o usuário admin sem violar constraints

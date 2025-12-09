@@ -12,6 +12,6 @@ Rails.application.routes.draw do
   post '/login', to: 'sessions#create'
   
   namespace :admin do
-    post 'importar', to: 'imports#create'
+    post 'importar', to: 'importar#create'
   end
 end
