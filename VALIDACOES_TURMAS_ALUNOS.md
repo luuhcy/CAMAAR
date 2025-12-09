@@ -209,7 +209,7 @@ codigo_sigaa,nome_turma,disciplina,semestre,matricula_aluno,nome_aluno,email_alu
 CIC0004,Turma A,Algoritmos e Programação,2º/2024,202100001,João Silva,joao@unb.br
 CIC0004,Turma A,Algoritmos e Programação,2º/2024,202100002,Maria Santos,maria@unb.br
 CIC0004,Turma A,Algoritmos e Programação,1º/2025,202100001,João Silva,joao@unb.br
-CIC0005,Estruturas de Dados,Estruturas,2º/2024,202100001,João Silva,joao@unb.br
+CIC0005,Turma 02,Estrutura de Dados,2º/2024,202100001,João Silva,joao@unb.br
 ```
 
 **Nota sobre o campo `semestre`**: 
