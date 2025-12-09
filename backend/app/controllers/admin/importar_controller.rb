@@ -13,7 +13,15 @@ module Admin
 
       begin
         file = params[:csvFile]
-        csv_data = file.read.force_encoding('UTF-8')
+        # Tentar ler com diferentes encodings
+        csv_data = file.read
+        
+        # Tentar UTF-8 primeiro, se falhar, tenta ISO-8859-1
+        begin
+          csv_data = csv_data.force_encoding('UTF-8').encode('UTF-8')
+        rescue Encoding::InvalidByteSequenceError
+          csv_data = csv_data.force_encoding('ISO-8859-1').encode('UTF-8')
+        end
         
         turmas_criadas = 0
         alunos_criados = 0
@@ -90,9 +98,9 @@ module Admin
           erros: erros
         }, status: :ok
 
-      rescue CSV::ParserError => e
-        render json: { message: "Erro ao parsear CSV: #{e.message}" }, status: :bad_request
-      rescue StandardError => e
+      rescue CSV::InvalidEncodingError, Encoding::InvalidByteSequenceError => e
+        render json: { message: "Erro de encoding no arquivo CSV: #{e.message}. Certifique-se de que o arquivo está em UTF-8 ou Latin1." }, status: :bad_request
+      rescue CSV::ParserError, StandardError => e
         render json: { message: "Erro ao processar importação: #{e.message}" }, status: :internal_server_error
       end
     end
