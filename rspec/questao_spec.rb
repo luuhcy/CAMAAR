@@ -1,7 +1,7 @@
 require 'rails_helper'
 
+# Testes do model Questao
 RSpec.describe Questao, type: :model do
-  describe 'associations' do
-    it { should belong_to(:template) }
-  end
+  # Associações
+  it { should belong_to(:template) }
 end

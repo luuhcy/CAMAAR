@@ -1,8 +1,8 @@
 require 'rails_helper'
 
+# Testes do model Respostum
 RSpec.describe Respostum, type: :model do
-  describe 'associations' do
-    it { should belong_to(:user) }
-    it { should belong_to(:formulario) }
-  end
+  # Testa se as associações tão funcionando
+  it { should belong_to(:user) }
+  it { should belong_to(:formulario) }
 end
