@@ -2,7 +2,7 @@
     <AdminLayout active-menu-id="gerenciamento">
         <div class="import-container">
             <h1 class="page-header">Importar Dados</h1>
-            <p class="subtitle">Faça o upload do arquivo CSV com as novas informações de turmas, professores e avaliações.</p>
+            <p class="subtitle">Faça o upload do arquivo CSV com as informações das turmas e alunos.</p>
             
             <div class="import-card">
                 <h2>Selecione o Arquivo</h2>
