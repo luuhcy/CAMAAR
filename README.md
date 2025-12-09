@@ -11,6 +11,10 @@ Sistema para avaliação de atividades acadêmicas remotas do CIC.
 - Node.js 18+ e npm
 - Bundler (`gem install bundler`)
 - SQLite3 (biblioteca e binário do cliente)
+- Gems de teste (já incluídas no Gemfile):
+  - `rspec-rails` — framework de testes
+  - `factory_bot_rails` — fixtures para testes
+  - `shoulda-matchers` — matchers para validações e associações
 
 ## Configuração Rápida
 ### 1) Clonar e instalar backend
@@ -50,6 +54,8 @@ npm run dev
 - `rails db:seed` — popula dados iniciais
 - `rails db:migrate` — aplica migrations
 - `npm run dev` — executa frontend em modo dev
+- `bundle exec rspec` — roda todos os testes RSpec (do diretório backend)
+- `bash rspec/run-tests.sh` — script para rodar testes do diretório rspec/
 
 ## Notas
 - Certifique-se de que Ruby 3.3.0 está ativo antes de instalar gems.
