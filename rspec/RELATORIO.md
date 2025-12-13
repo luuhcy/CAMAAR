@@ -1,37 +1,44 @@
-# Relatório dos Testes
+# Testes RSpec - CAMAAR
 
-## O que foi testado
+## Testes Criados
 
-Fiz testes pra todos os models e controllers principais do sistema. No total deu 28 testes e todos passaram.
+### 1. Turma (`turma_spec.rb`)
+- ✅ Cria turma válida
+- ❌ Não aceita turma sem código
+- ✅ Permite mesmo código em semestres diferentes  
+- ❌ Não permite mesmo código no mesmo semestre
 
-## Models
+### 2. Student (`student_spec.rb`)
+- ✅ Cria aluno válido
+- ❌ Não aceita aluno sem matrícula
+- ✅ Permite mesmo aluno em semestres diferentes
+- ❌ Não permite mesmo aluno na mesma turma
 
-**User** - Testa se o usuário tem templates e se a senha tá sendo criptografada direito
+### 3. Importação CSV (`importar_controller_spec.rb`)
+- ✅ Importa CSV válido
+- ❌ Retorna erro sem arquivo
+- ✅ Permite mesmo aluno em semestres diferentes
 
-**Template** - Verifica se tá ligado com user e formulários
+### 4. Turmas Controller (`turmas_controller_spec.rb`)
+- ✅ Lista turmas
+- ✅ Mostra turma
+- ✅ Cria turma
+- ❌ Não cria turma inválida
 
-**Questao** - Checa se pertence a um template
-
-**Turma** - Testa as validações de código e semestre, e se o ano tá sendo extraído certo do semestre
-
-**Student** - Valida os campos obrigatórios (matrícula, nome, email)
-
-**Formulario** - Verifica ligação com template e turma
-
-**Respostum** - Testa associação com user e formulário
-
-## Controllers
-
-Testei as rotas principais de cada controller:
-- Listar todos (GET)
-- Criar novo (POST)
-
-Pro SessionsController testei o login com senha certa e errada.
-
-## Resultado
-
-28 testes rodaram em 0.37 segundos, todos passaram.
+### 5. User (`user_spec.rb`)
+- ✅ Cria usuário válido
+- ✅ Autentica senha correta
+- ❌ Rejeita senha errada
 
 ## Como rodar
 
-Criei um script `run-tests.sh` que roda as migrations e depois os testes.
+**Primeira vez (instalar gems):**
+```bash
+cd rspec/
+bash instalar.sh
+```
+
+**Rodar testes:**
+```bash
+bash run-tests-simple.sh
+```

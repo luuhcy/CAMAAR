@@ -44,4 +44,5 @@ group :development, :test do
   gem 'factory_bot_rails' 
   # A gem 'shoulda-matchers' é útil para simplificar os testes de validação e associação
   gem 'shoulda-matchers', require: false
+
 end
