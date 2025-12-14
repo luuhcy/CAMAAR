@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  resources :resposta
+  resources :respostas
   resources :formularios
   resources :students
   resources :turmas

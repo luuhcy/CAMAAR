@@ -92,45 +92,58 @@ const perguntas = ref([
   }
 ]);
 
+const formularioId = ref(null);
 const loadMateriaData = async (turmaId) => {
-    loading.value = true;
-    try {
-        // Busca os dados da turma no Rails (Porta 3001)
-        const response = await $fetch(`http://localhost:3001/turmas/${turmaId}`); 
-        
-        // Pega apenas Nome e Semestre para o cabeçalho
-        materiaNome.value = response.disciplina || response.nome; 
-        materiaSemestre.value = response.semestre;
-        
-        // Removemos a lógica de buscar alunos (response.students)
+  loading.value = true
+  submitError.value = ''
 
-    } catch (e) {
-        console.error(e);
-        materiaNome.value = 'Erro';
-        submitError.value = 'Falha ao buscar dados da avaliação. Verifique a conexão.';
-    } finally {
-        loading.value = false;
+  try {
+    const response = await $fetch(`http://localhost:3001/turmas/${turmaId}`)
+
+    // Cabeçalho
+    materiaNome.value = response.disciplina || response.nome
+    materiaSemestre.value = response.semestre
+
+    // Formulário
+    formularioId.value = response.formulario.id
+  } catch (e) {
+    console.error(e)
+    submitError.value = 'Erro ao carregar o formulário.'
+  } finally {
+    loading.value = false
+  }
+}
+
+
+const submitForm = () => {
+  fetch('http://localhost:3001/respostas', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      resposta: respostas.value,
+      user_id: 1,
+      formulario_id: formularioId.value
+    })
+  })
+  .then(async response => {
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(text);
     }
-};
-
-const submitForm = async () => {
-    const totalQuestions = perguntas.value.length;
-    const answeredCount = Object.keys(respostas.value).length;
-    
-    if (answeredCount < totalQuestions) {
-        alert(`Você precisa responder a todas as perguntas antes de enviar.`);
-        return;
-    }
-
-    // Lógica de envio (Futuramente conectar ao Rails aqui)
-    console.log('Formulário Enviado:', {
-        turmaId: route.params.id,
-        respostas: respostas.value
-    });
-
+    return response.json();
+  })
+  .then(() => {
     alert('Avaliação enviada com sucesso!');
-    router.push('/avaliacoes');
+  })
+  .catch(() => {
+    alert('Erro ao enviar avaliação');
+  });
 };
+
+
+
 
 const goBack = () => {
     router.push('/avaliacoes'); 
