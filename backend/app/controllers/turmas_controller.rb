@@ -8,12 +8,17 @@ class TurmasController < ApplicationController
     render json: @turmas
   end
 
-  # GET /turmas/1
   def show
-  render json: {
-    turma: @turma,
-    formulario: @turma.formularios.last
-  }
+    @formulario = @turma.formularios.last
+
+    @respostas = @formulario ? @formulario.respostas : []
+
+    # 3. Retornamos o JSON com as 3 partes: turma, formulário e respostas
+    render json: {
+      turma: @turma,
+      formulario: @formulario,
+      respostas: @respostas
+    }
   end
 
   # POST /turmas

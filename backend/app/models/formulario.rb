@@ -1,5 +1,8 @@
 class Formulario < ApplicationRecord
-  belongs_to :template
   belongs_to :turma
-  has_many :respostas
+
+  has_many :respostas,
+           class_name: 'Respostum',
+           foreign_key: 'formulario_id',
+           dependent: :destroy
 end
