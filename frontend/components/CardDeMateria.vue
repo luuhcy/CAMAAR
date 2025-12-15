@@ -23,34 +23,39 @@ const props = defineProps({
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  height: 100px;
+  min-height: 120px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   cursor: pointer;
+  transition: all 0.3s ease;
+}
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
 }
 .card-content {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: 100%;
+  gap: 5px;
 }
 .subject-name { 
-  margin: 0 0 5px 0; 
+  margin: 0; 
   font-size: 1.1rem; 
   font-weight: bold; 
-  color: #333; 
+  color: #333;
+  line-height: 1.3;
 }
 .semestre { 
-  font-size: 0.8rem; 
+  font-size: 0.85rem; 
   color: #666; 
-  display: block; 
-  margin-bottom: 5px; 
+  display: block;
 }
 .professor { 
-  font-weight: bold; 
+  font-weight: 500; 
   margin: 0; 
-  font-size: 1rem; 
-  color: #333; 
+  font-size: 0.9rem; 
+  color: #0066cc;
 }
 </style>

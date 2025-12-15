@@ -1,32 +1,54 @@
 <template>
   <div class="grid-container">
     <CardDeMateria 
-      v-for="materia in materias" 
-      :key="materia.id" 
-      :materia="materia"
-      @click="openAvaliacao(materia.id)"
+      v-for="formulario in formularios" 
+      :key="formulario.id" 
+      :materia="formatFormularioToMateria(formulario)"
+      @click="openAvaliacao(formulario.id)"
     />
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import CardDeMateria from '~/components/CardDeMateria.vue';
 
 const router = useRouter();
+const formularios = ref([]);
+const loading = ref(true);
+const error = ref(null);
 
-const materias = ref([
-  { id: 1, nome: "Nome da matéria A", semestre: "2023.2", professor: "Prof. Silva" },
-  { id: 2, nome: "Nome da matéria B", semestre: "2024.1", professor: "Prof. Souza" },
-  { id: 3, nome: "Nome da matéria C", semestre: "2024.1", professor: "Prof. Santos" },
-  { id: 4, nome: "Nome da matéria D", semestre: "2023.2", professor: "Prof. Oliveira" },
-  { id: 5, nome: "Nome da matéria E", semestre: "2024.1", professor: "Prof. Costa" }
-]);
+const formatFormularioToMateria = (formulario) => {
+  return {
+    id: formulario.id,
+    nome: formulario.titulo || formulario.turma?.disciplina || 'Sem título',
+    semestre: `${formulario.turma?.semestre}`,
+    professor: formulario.template?.nome || 'Template não especificado'
+  };
+};
+
+const fetchFormularios = async () => {
+  try {
+    loading.value = true;
+    const response = await fetch('http://localhost:3001/formularios');
+    if (!response.ok) throw new Error('Erro ao buscar formulários');
+    formularios.value = await response.json();
+  } catch (err) {
+    error.value = err.message;
+    console.error('Erro:', err);
+  } finally {
+    loading.value = false;
+  }
+};
 
 const openAvaliacao = (id) => {
-    router.push(`/admin/avaliacoes/${id}`); 
+    router.push(`/formulario/${id}`); 
 };
+
+onMounted(() => {
+  fetchFormularios();
+});
 </script>
 
 <style scoped>

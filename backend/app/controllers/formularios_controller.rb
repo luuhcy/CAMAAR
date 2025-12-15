@@ -3,9 +3,14 @@ class FormulariosController < ApplicationController
 
   # GET /formularios
   def index
-    @formularios = Formulario.all
-
-    render json: @formularios
+    @formularios = Formulario.includes(:turma, :template).all
+    
+    render json: @formularios.as_json(
+      include: {
+        turma: { only: [:id, :codigo_sigaa, :nome, :disciplina, :semestre, :ano] },
+        template: { only: [:id, :nome, :descricao] }
+      }
+    )
   end
 
   # GET /formularios/1
