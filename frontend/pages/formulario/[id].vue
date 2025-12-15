@@ -93,19 +93,20 @@ const perguntas = ref([
 ]);
 
 const formularioId = ref(null);
-const loadMateriaData = async (turmaId) => {
+const loadMateriaData = async (id) => {
   loading.value = true
   submitError.value = ''
 
   try {
-    const response = await $fetch(`http://localhost:3001/turmas/${turmaId}`)
+    const response = await $fetch(`http://localhost:3001/formularios/${id}`)
 
-    // Cabeçalho
-    materiaNome.value = response.disciplina || response.nome
-    materiaSemestre.value = response.semestre
+    // Cabeçalho - exibir: (CÓDIGO) Nome da Disciplina - Semestre
+    const turma = response.turma
+    materiaNome.value = `(${turma.codigo_sigaa}) ${turma.disciplina}`
+    materiaSemestre.value = turma.semestre
 
     // Formulário
-    formularioId.value = response.formulario.id
+    formularioId.value = response.id
   } catch (e) {
     console.error(e)
     submitError.value = 'Erro ao carregar o formulário.'

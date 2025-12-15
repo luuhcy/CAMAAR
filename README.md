@@ -23,7 +23,7 @@ git clone https://github.com/luuhcy/CAMAAR.git
 cd CAMAAR/backend
 bundle install
 cp config/database.yml config/database.yml.local || true
-rails db:create db:migrate db:seed
+rails db:migrate db:seed
 ```
 
 ### 2) Rodar backend (porta 3001)
@@ -40,6 +40,7 @@ npm run dev
 ```
 
 ### 4) Importar CSV (admin)
+- Importação disponível na interface; ou
 - Endpoint: `POST http://localhost:3001/admin/importar`
 - Campo de formulário: `csvFile`
 - Formato: `codigo_sigaa,nome_turma,disciplina,semestre,matricula_aluno,nome_aluno,email_aluno`

@@ -53,9 +53,9 @@ const props = defineProps({
   display: block;
 }
 .professor { 
-  font-weight: 500; 
-  margin: 0; 
-  font-size: 0.9rem; 
-  color: #0066cc;
+  font-size: 0.85rem; 
+  color: #666; 
+  display: block;
+  margin: 0;
 }
 </style>

@@ -5,8 +5,8 @@
 
     <div class="action-buttons-grid">
       <button class="btn-action green-dark" @click="handleAction('importar')">Importar dados</button>
-      <button class="btn-action green-light" @click="handleAction('editar_templates')">Editar Templates</button>
-      <button class="btn-action green-medium" @click="handleAction('enviar_formularios')">Enviar Formulários</button>
+      <button class="btn-action green-light" @click="handleAction('editar_templates')">Editar templates</button>
+      <button class="btn-action green-medium" @click="handleAction('enviar_formularios')">Enviar formulários</button>
       <button class="btn-action green-soft" @click="handleAction('resultados')">Resultados</button>
     </div>
   </div>

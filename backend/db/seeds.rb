@@ -1,6 +1,8 @@
 # backend/db/seeds.rb
 
 # Limpar dados na ordem correta (respeitar foreign keys)
+Formulario.destroy_all
+Questao.destroy_all
 Template.destroy_all
 Student.destroy_all
 Turma.destroy_all
@@ -36,6 +38,29 @@ create_turma("MAT0025", "Turma C", "Cálculo 1", "2º/2024")
 create_turma("FGA0138", "Turma A", "Métodos de Design", "1º/2025")
 
 puts "✅ Turmas cadastradas com sucesso!"
+
+# ALUNOS
+
+puts "Criando alunos..."
+
+turma_fga = Turma.find_by(codigo_sigaa: "FGA0138")
+
+Student.create!(
+  name: "João Silva",
+  matricula: "200012345",
+  email: "joao.silva@aluno.unb.br",
+  turma_id: turma_fga.id
+)
+
+User.create!(
+  nome: "João Silva",
+  email: "joao.silva@aluno.unb.br",
+  matricula: "200012345",
+  password: "12345678",
+  tipo: "estudante"
+)
+
+puts "✅ Aluno criado com sucesso!"
 
 #TEMPLATES DE AVALIAÇÃO
 

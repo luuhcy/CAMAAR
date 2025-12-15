@@ -22,7 +22,17 @@ class FormulariosController < ApplicationController
 
   # GET /formularios/1
   def show
-    render json: @formulario
+    render json: @formulario.as_json(
+      include: {
+        turma: { only: [:id, :codigo_sigaa, :nome, :disciplina, :semestre, :ano] },
+        template: { 
+          only: [:id, :nome, :descricao],
+          include: {
+            user: { only: [:id, :nome, :email] }
+          }
+        }
+      }
+    )
   end
 
   # POST /formularios
@@ -53,7 +63,7 @@ class FormulariosController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_formulario
-      @formulario = Formulario.find(params.expect(:id))
+      @formulario = Formulario.includes(turma: [], template: :user).find(params.expect(:id))
     end
 
     # Only allow a list of trusted parameters through.

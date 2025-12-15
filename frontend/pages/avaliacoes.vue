@@ -25,20 +25,20 @@
       </aside>
     
       <main class="main-content-area">
-        <div v-if="pending">Carregando turmas...</div>
-        <div v-else-if="error">Erro ao carregar turmas.</div>
+        <div v-if="pending">Carregando formulários...</div>
+        <div v-else-if="error">{{ error }}</div>
         
         <div v-else class="grid-container">
           <div 
-            v-for="turma in turmas" 
-            :key="turma.id" 
+            v-for="formulario in formularios" 
+            :key="formulario.id" 
             class="card"
           >
-            <NuxtLink :to="`/formulario/${turma.id}`" class="card-link">
+            <NuxtLink :to="`/formulario/${formulario.id}`" class="card-link">
               <div class="card-content">
-                <h3 class="subject-name">{{ turma.disciplina }}</h3>
-                <p class="turma-nome">Turma: {{ turma.nome }}</p>
-                <span class="semestre">{{ turma.semestre }} / {{ turma.ano }}</span>
+                <h3 class="subject-name">({{ formulario.turma.codigo_sigaa }}) {{ formulario.turma.disciplina }}</h3>
+                <p class="turma-nome">{{ formulario.turma.nome }}</p>
+                <span class="semestre">{{ formulario.turma.semestre }}</span>
                 </div>
             </NuxtLink>
           </div>
@@ -49,7 +49,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
 definePageMeta({
@@ -59,11 +59,51 @@ definePageMeta({
 const router = useRouter();
 const isSidebarOpen = ref(false);
 const isDropdownOpen = ref(false);
+const formularios = ref([]);
+const pending = ref(true);
+const error = ref(null);
 
-// BUSCA OS DADOS DO BANCO DE DADOS
-const { data: turmas, pending, error } = await useFetch('http://localhost:3001/turmas', {
-    default: () => [] 
-});
+const fetchFormularios = async () => {
+  try {
+    pending.value = true;
+    const userMatricula = localStorage.getItem('userMatricula');
+    const userId = localStorage.getItem('userId');
+
+    if (!userMatricula || !userId) {
+      error.value = 'Usuário não autenticado';
+      return;
+    }
+
+    // Buscar dados do estudante pela matrícula
+    const studentResponse = await $fetch(`http://localhost:3001/students`);
+    const student = studentResponse.find(s => s.matricula === userMatricula);
+
+    if (!student) {
+      error.value = 'Estudante não encontrado';
+      return;
+    }
+
+    // Buscar formulários ativos
+    const formulariosResponse = await $fetch('http://localhost:3001/formularios');
+    
+    // Filtrar apenas formulários da turma do aluno
+    const formulariosAluno = formulariosResponse.filter(f => f.turma_id === student.turma_id);
+
+    // Buscar respostas já enviadas pelo aluno
+    const respostasResponse = await $fetch('http://localhost:3001/respostas');
+    const respostasAluno = respostasResponse.filter(r => r.user_id === parseInt(userId));
+    const formularioRespondidosIds = respostasAluno.map(r => r.formulario_id);
+
+    // Filtrar formulários não respondidos
+    formularios.value = formulariosAluno.filter(f => !formularioRespondidosIds.includes(f.id));
+
+  } catch (e) {
+    console.error('Erro ao buscar formulários:', e);
+    error.value = 'Erro ao carregar formulários';
+  } finally {
+    pending.value = false;
+  }
+};
 
 const toggleSidebar = () => {
   isSidebarOpen.value = !isSidebarOpen.value;
@@ -76,8 +116,14 @@ const toggleDropdown = () => {
 const handleLogout = () => {
     localStorage.removeItem('isAuthenticated');
     localStorage.removeItem('userRole');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userMatricula');
     router.push('/login');
 };
+
+onMounted(() => {
+  fetchFormularios();
+});
 </script>
 
 <style scoped>
