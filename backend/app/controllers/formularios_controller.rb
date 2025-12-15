@@ -4,13 +4,18 @@ class FormulariosController < ApplicationController
   # GET /formularios
   def index
     # Busca apenas formulários ativos (data atual entre data_inicio e data_termino)
-    @formularios = Formulario.includes(:turma, :template)
+    @formularios = Formulario.includes(turma: [], template: :user)
                               .where("data_inicio <= ? AND data_termino >= ?", DateTime.now, DateTime.now)
     
     render json: @formularios.as_json(
       include: {
         turma: { only: [:id, :codigo_sigaa, :nome, :disciplina, :semestre, :ano] },
-        template: { only: [:id, :nome, :descricao] }
+        template: { 
+          only: [:id, :nome, :descricao],
+          include: {
+            user: { only: [:id, :nome, :email] }
+          }
+        }
       }
     )
   end
