@@ -162,15 +162,6 @@ Formulario.create!(
   turma_id: turma_mat.id
 )
 
-# Formulário 3: Avaliação de Projeto para FGA0138
-Formulario.create!(
-  titulo: "Avaliação do Projeto Final - Métodos de Design",
-  data_inicio: DateTime.new(2025, 12, 10, 0, 0, 0),
-  data_termino: DateTime.new(2026, 1, 15, 23, 59, 59),
-  template_id: template2.id,
-  turma_id: turma_fga.id
-)
-
 # Formulário 4: Avaliação Docente para FGA0138 (turma também tem avaliação do professor)
 Formulario.create!(
   titulo: "Avaliação do Professor - Métodos de Design",

@@ -1,7 +1,7 @@
 <template>
     <AdminLayout active-menu-id="gerenciamento">
         <div class="resultados-container">
-            <h1 class="page-header">📊 Resultados das Avaliações</h1>
+            <h1 class="page-header">Resultados das Avaliações</h1>
             <p class="subtitle">Selecione uma turma para visualizar as notas e comentários consolidados.</p>
 
             <div v-if="loading" class="loading-state">
@@ -10,24 +10,24 @@
 
             <div v-else class="results-list">
                 <div 
-                    v-for="turma in turmas" 
+                    v-for="turma in turmasComRespostas" 
                     :key="turma.id" 
                     class="turma-card"
                     @click="openTurmaDetails(turma.id)"
                 >
-                    <div class="code">{{ turma.codigo || turma.disciplina }}</div>
+                    <div class="code">({{ turma.codigo_sigaa }}) {{ turma.disciplina }}</div>
+                    <div class="name">Turma: {{ turma.nome }}</div>
                     <div class="name">Semestre: {{ turma.semestre }}</div>
-                    <div class="docente">ID Turma: {{ turma.id }}</div>
                     <div class="stats">
                         <span v-if="turma.total_respostas !== undefined">
-                            📝 {{ turma.total_respostas }} avaliações
+                            {{ turma.total_respostas }} {{ turma.total_respostas === 1 ? 'resposta' : 'respostas' }}
                         </span>
                         <span v-else class="ver-detalhes">Clique para ver detalhes</span>
                     </div>
                 </div>
 
-                <div v-if="turmas.length === 0" class="empty-message">
-                    Nenhuma turma encontrada no banco de dados.
+                <div v-if="turmasComRespostas.length === 0" class="empty-message">
+                    Nenhum formulário com respostas encontrado.
                 </div>
             </div>
 
@@ -67,6 +67,10 @@
                                 <div v-if="resultado.respostas.length === 0" class="no-comment">Sem comentários.</div>
                             </div>
                         </div>
+
+                        <button class="export-btn" @click="exportarCSV">
+                            Exportar .csv
+                        </button>
                     </div>
                 </div>
             </div>
@@ -85,10 +89,12 @@ definePageMeta({
 });
 
 const turmas = ref([]);
+const turmasComRespostas = ref([]);
 const loading = ref(true);
 const loadingDetails = ref(false);
 const selectedTurma = ref(null);
 const processedResults = ref([]); // Onde guardaremos os dados consolidados
+const respostasRaw = ref([]); // Armazenar respostas brutas para exportação
 
 // ESQUEMA DAS PERGUNTAS (Deve bater com a ordem do formulário/[id].vue)
 // Precisamos disso para saber que o índice "0" é a pergunta do Plano de Ensino, etc.
@@ -99,15 +105,41 @@ const SCHEMA_PERGUNTAS = [
   { index: '3', titulo: '4. Qualidade do Material', tipo: 'multipla_escolha' }
 ];
 
-// 1. Carrega a lista de turmas da API
+// 1. Carrega a lista de turmas da API e filtra apenas as que têm respostas
 const loadTurmas = async () => {
     loading.value = true;
     try {
-        // Usando o proxy '/rails' configurado ou URL direta
-        const response = await fetch('http://localhost:3001/turmas'); 
-        if (!response.ok) throw new Error('Falha ao buscar turmas');
-        const data = await response.json();
-        turmas.value = data;
+        // Buscar formulários
+        const formulariosResponse = await fetch('http://localhost:3001/formularios');
+        if (!formulariosResponse.ok) throw new Error('Falha ao buscar formulários');
+        const formularios = await formulariosResponse.json();
+
+        // Buscar respostas
+        const respostasResponse = await fetch('http://localhost:3001/respostas');
+        if (!respostasResponse.ok) throw new Error('Falha ao buscar respostas');
+        const respostas = await respostasResponse.json();
+
+        // Filtrar apenas formulários com respostas
+        const formulariosComRespostas = formularios.filter(f => 
+            respostas.some(r => r.formulario_id === f.id)
+        );
+
+        // Mapear para extrair turmas únicas
+        const turmasMap = new Map();
+        formulariosComRespostas.forEach(f => {
+            if (f.turma && !turmasMap.has(f.turma.id)) {
+                turmasMap.set(f.turma.id, {
+                    ...f.turma,
+                    total_respostas: respostas.filter(r => 
+                        formulariosComRespostas.some(form => 
+                            form.turma_id === f.turma.id && form.id === r.formulario_id
+                        )
+                    ).length
+                });
+            }
+        });
+
+        turmasComRespostas.value = Array.from(turmasMap.values());
     } catch (error) {
         console.error("Erro ao carregar turmas:", error);
         alert("Erro ao conectar com o servidor.");
@@ -131,10 +163,10 @@ const openTurmaDetails = async (turmaId) => {
         
         // Verifica se existem respostas no objeto retornado
         // Estrutura esperada: data.formulario.respostas (array)
-        const respostasRaw = data.respostas || [];
+        respostasRaw.value = data.respostas || [];
 
         
-        processedResults.value = consolidarDados(respostasRaw);
+        processedResults.value = consolidarDados(respostasRaw.value);
 
 
     } catch (error) {
@@ -212,6 +244,82 @@ const calculatePercentage = (count, total) => {
     return Math.round((count / total) * 100);
 };
 
+// Função para escapar valores CSV (trata vírgulas, aspas e ponto-e-vírgulas)
+const escaparCSV = (valor) => {
+    if (valor === null || valor === undefined) return '';
+    
+    const valorString = String(valor);
+    
+    // Se contém vírgula, ponto-e-vírgula, aspas ou quebra de linha, deve ser envolvido em aspas
+    if (valorString.includes(',') || valorString.includes(';') || valorString.includes('"') || valorString.includes('\n')) {
+        // Duplica aspas internas (padrão CSV)
+        return `"${valorString.replace(/"/g, '""')}"`;
+    }
+    
+    return valorString;
+};
+
+// Função para exportar CSV
+const exportarCSV = () => {
+    if (!selectedTurma.value || respostasRaw.value.length === 0) {
+        alert('Nenhuma resposta disponível para exportar');
+        return;
+    }
+
+    // Cabeçalho do CSV
+    const headers = ['Aluno ID', 'Data Resposta', 'Status'];
+    
+    // Adicionar os títulos reais das perguntas
+    SCHEMA_PERGUNTAS.forEach((pergunta) => {
+        // Remove a numeração do início (ex: "1. " ou "2. ")
+        const tituloLimpo = pergunta.titulo.replace(/^\d+\.\s*/, '');
+        headers.push(tituloLimpo);
+    });
+
+    let csvContent = headers.map(h => escaparCSV(h)).join(',') + '\n';
+
+    // Processar cada resposta
+    respostasRaw.value.forEach(resposta => {
+        let respostasAluno;
+        
+        try {
+            respostasAluno = typeof resposta.data_resposta === 'string' 
+                ? JSON.parse(resposta.data_resposta) 
+                : resposta.data_resposta;
+        } catch (error) {
+            console.error('Erro ao parsear resposta:', error);
+            return;
+        }
+
+        const linha = [
+            escaparCSV(resposta.user_id),
+            escaparCSV(resposta.created_at || new Date().toISOString()),
+            escaparCSV(resposta.status || 'enviado')
+        ];
+
+        // Adicionar respostas de cada pergunta
+        SCHEMA_PERGUNTAS.forEach(pergunta => {
+            const valorResposta = respostasAluno?.[pergunta.index] || '';
+            linha.push(escaparCSV(valorResposta));
+        });
+
+        csvContent += linha.join(',') + '\n';
+    });
+
+    // Criar blob e fazer download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', `respostas_${selectedTurma.value.disciplina}_${selectedTurma.value.semestre}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+};
+
 onMounted(() => {
     loadTurmas();
 });
@@ -235,8 +343,8 @@ onMounted(() => {
     transition: all 0.2s ease;
 }
 .turma-card:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1); }
-.code { font-size: 1.1rem; font-weight: bold; color: #333; }
-.name { font-size: 0.9rem; color: #666; margin-top: 5px; }
+.code { font-size: 1.1rem; font-weight: bold; color: #333; margin-bottom: 8px; }
+.name { font-size: 0.9rem; color: #666; margin-top: 3px; }
 .stats { margin-top: 15px; font-size: 0.85rem; color: #8E24AA; font-weight: 600; }
 .ver-detalhes { text-decoration: underline; }
 
@@ -275,4 +383,22 @@ onMounted(() => {
 .comments-list { display: flex; flex-direction: column; gap: 10px; max-height: 200px; overflow-y: auto; }
 .comment-item { background: white; padding: 10px; border-left: 3px solid #ccc; font-style: italic; color: #555; font-size: 0.9rem; }
 .no-comment { color: #999; font-style: italic; }
+
+/* Botão Exportar */
+.export-btn {
+    width: 100%;
+    margin-top: 20px;
+    padding: 12px 24px;
+    background-color: #6C2365;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.export-btn:hover {
+    background-color: #8E24AA;
+}
 </style>
