@@ -64,6 +64,7 @@ const handleLogin = async () => {
     localStorage.setItem('userName', response.user.nome);
     localStorage.setItem('userEmail', response.user.email);
     localStorage.setItem('userRole', response.user.tipo); // 'admin' ou 'user'
+    localStorage.setItem('userMatricula', response.user.matricula);
 
     // Redireciona
     if (response.user.tipo === 'admin') {

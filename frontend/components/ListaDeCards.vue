@@ -9,13 +9,11 @@
         @click="openAvaliacao(formulario.id)"
       />
       
-      <!-- Card para criar novo formulário -->
-      <div class="card-criar" @click="criarNovoFormulario">
-        <span class="titulo-criar">Clique para criar um novo formulário</span>
-      </div>
+    <!-- Card para criar novo formulário (somente admin) -->
+    <div v-if="isAdmin" class="card-criar" @click="criarNovoFormulario">
+      <span class="titulo-criar">Clique para criar um novo formulário</span>
     </div>
-
-    <!-- Modal de criação de formulário -->
+  </div>    <!-- Modal de criação de formulário -->
     <div v-if="showModal" class="modal-overlay" @click.self="fecharModal">
       <div class="modal-content">
         <h2 class="modal-title">{{ modoEdicao ? 'Editar Formulário' : 'Criar Novo Formulário' }}</h2>
@@ -97,7 +95,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import CardDeMateria from '~/components/CardDeMateria.vue';
 
@@ -114,6 +112,21 @@ const modalError = ref('');
 const modalSuccess = ref('');
 const modoEdicao = ref(false);
 const formularioEditando = ref(null);
+
+// Verificar tipo de usuário
+const userRole = ref('');
+const userId = ref(null);
+const userMatricula = ref('');
+
+onMounted(() => {
+  if (process.client) {
+    userRole.value = localStorage.getItem('userRole') || '';
+    userId.value = localStorage.getItem('userId') || null;
+    userMatricula.value = localStorage.getItem('userMatricula') || '';
+  }
+});
+
+const isAdmin = computed(() => userRole.value === 'admin');
 
 const novoFormulario = ref({
   titulo: '',
@@ -155,7 +168,35 @@ const fetchFormularios = async () => {
     loading.value = true;
     const response = await fetch('http://localhost:3001/formularios');
     if (!response.ok) throw new Error('Erro ao buscar formulários');
-    formularios.value = await response.json();
+    
+    let todosFormularios = await response.json();
+    
+    // Se for aluno, filtrar apenas formulários não respondidos da turma dele
+    if (!isAdmin.value && userMatricula.value) {
+      // Buscar aluno pela matrícula
+      const studentsResponse = await fetch(`http://localhost:3001/students`);
+      const students = studentsResponse.ok ? await studentsResponse.json() : [];
+      const alunoLogado = students.find(s => s.matricula === userMatricula.value);
+      
+      if (alunoLogado) {
+        // Buscar respostas do aluno
+        const respostasResponse = await fetch(`http://localhost:3001/respostas`);
+        const todasRespostas = respostasResponse.ok ? await respostasResponse.json() : [];
+        
+        // Filtrar respostas pelo user_id
+        const respostasDoAluno = todasRespostas.filter(r => r.user_id === parseInt(userId.value));
+        const formulariosRespondidos = [...new Set(respostasDoAluno.map(r => r.formulario_id))];
+        
+        // Filtrar: apenas formulários da turma do aluno que ele não respondeu
+        todosFormularios = todosFormularios.filter(f => 
+          f.turma_id === alunoLogado.turma_id && !formulariosRespondidos.includes(f.id)
+        );
+      } else {
+        todosFormularios = [];
+      }
+    }
+    
+    formularios.value = todosFormularios;
   } catch (err) {
     error.value = err.message;
     console.error('Erro:', err);
@@ -198,9 +239,15 @@ const filtrarTurmasPorSemestre = () => {
 };
 
 const openAvaliacao = (id) => {
-    const formulario = formularios.value.find(f => f.id === id);
-    if (formulario) {
-      editarFormulario(formulario);
+    if (isAdmin.value) {
+      // Admin: abre modal de edição
+      const formulario = formularios.value.find(f => f.id === id);
+      if (formulario) {
+        editarFormulario(formulario);
+      }
+    } else {
+      // Aluno: redireciona para página de responder formulário
+      router.push(`/formulario/${id}`);
     }
 };
 
@@ -323,8 +370,10 @@ const submitFormulario = async () => {
 
 onMounted(() => {
   fetchFormularios();
-  fetchTemplates();
-  fetchTurmas();
+  if (isAdmin.value) {
+    fetchTemplates();
+    fetchTurmas();
+  }
 });
 </script>
 
