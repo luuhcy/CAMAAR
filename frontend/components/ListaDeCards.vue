@@ -1,5 +1,11 @@
 <template>
   <div class="grid-container">
+    <!-- Card para criar novo formulário -->
+    <div class="card-criar" @click="criarNovoFormulario">
+      <span class="titulo-criar">Clique para criar um novo formulário</span>
+    </div>
+    
+    <!-- Cards de formulários existentes -->
     <CardDeMateria 
       v-for="formulario in formularios" 
       :key="formulario.id" 
@@ -63,6 +69,12 @@ const openAvaliacao = (id) => {
     router.push(`/formulario/${id}`); 
 };
 
+const criarNovoFormulario = () => {
+    // TODO: Implementar navegação para página de criação de formulário
+    console.log('Criar novo formulário');
+    // router.push('/admin/formularios/novo');
+};
+
 onMounted(() => {
   fetchFormularios();
 });
@@ -74,5 +86,33 @@ onMounted(() => {
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
   gap: 25px;
   width: 100%;
+}
+
+.card-criar {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px dashed #ccc;
+}
+
+.card-criar:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  border-color: #999;
+}
+
+.titulo-criar {
+  font-size: 0.85rem;
+  color: #333;
+  text-align: center;
+  font-weight: 500;
 }
 </style>
