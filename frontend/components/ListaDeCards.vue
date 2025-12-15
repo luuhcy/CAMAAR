@@ -20,10 +20,14 @@ const loading = ref(true);
 const error = ref(null);
 
 const formatFormularioToMateria = (formulario) => {
+  const codigoTurma = formulario.turma?.codigo_sigaa || '';
+  const titulo = formulario.titulo || 'Sem título';
+  const nomeComCodigo = codigoTurma ? `(${codigoTurma}) ${titulo}` : titulo;
+  
   return {
     id: formulario.id,
-    nome: formulario.titulo || formulario.turma?.disciplina || 'Sem título',
-    semestre: `${formulario.turma?.semestre}`,
+    nome: nomeComCodigo,
+    semestre: formulario.turma?.semestre || 'Semestre não especificado',
     professor: formulario.template?.nome || 'Template não especificado'
   };
 };
