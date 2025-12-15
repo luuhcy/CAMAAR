@@ -18,7 +18,7 @@
     <!-- Modal de criação de formulário -->
     <div v-if="showModal" class="modal-overlay" @click.self="fecharModal">
       <div class="modal-content">
-        <h2 class="modal-title">Criar Novo Formulário</h2>
+        <h2 class="modal-title">{{ modoEdicao ? 'Editar Formulário' : 'Criar Novo Formulário' }}</h2>
         
         <form @submit.prevent="submitFormulario" class="formulario-form">
           <div class="form-group">
@@ -28,13 +28,14 @@
               id="titulo" 
               v-model="novoFormulario.titulo" 
               required
+              :disabled="modoEdicao"
               placeholder="Ex: Avaliação do Professor - 1º Semestre"
             />
           </div>
 
           <div class="form-group">
             <label for="template">Template *</label>
-            <select id="template" v-model="novoFormulario.template_id" required>
+            <select id="template" v-model="novoFormulario.template_id" required :disabled="modoEdicao">
               <option value="">Selecione um template</option>
               <option v-for="template in templates" :key="template.id" :value="template.id">
                 {{ template.nome }}
@@ -44,7 +45,7 @@
 
           <div class="form-group">
             <label for="semestre">Semestre *</label>
-            <select id="semestre" v-model="novoFormulario.semestre" required @change="filtrarTurmasPorSemestre">
+            <select id="semestre" v-model="novoFormulario.semestre" required :disabled="modoEdicao" @change="filtrarTurmasPorSemestre">
               <option value="">Selecione um semestre</option>
               <option v-for="semestre in semestresDisponiveis" :key="semestre" :value="semestre">
                 {{ semestre }}
@@ -54,7 +55,7 @@
 
           <div class="form-group">
             <label for="turma">Turma *</label>
-            <select id="turma" v-model="novoFormulario.turma_id" required :disabled="!novoFormulario.semestre">
+            <select id="turma" v-model="novoFormulario.turma_id" required :disabled="modoEdicao || !novoFormulario.semestre">
               <option value="">Selecione uma turma</option>
               <option v-for="turma in turmasFiltradas" :key="turma.id" :value="turma.id">
                 {{ turma.codigo_sigaa }} - {{ turma.disciplina }} - {{ turma.nome }}
@@ -84,7 +85,7 @@
 
           <div class="form-actions">
             <button type="button" class="btn-cancelar" @click="fecharModal">Cancelar</button>
-            <button type="submit" class="btn-criar">Criar Formulário</button>
+            <button type="submit" class="btn-criar">{{ modoEdicao ? 'Atualizar' : 'Criar Formulário' }}</button>
           </div>
 
           <div v-if="modalError" class="error-message">{{ modalError }}</div>
@@ -111,6 +112,8 @@ const turmasFiltradas = ref([]);
 const semestresDisponiveis = ref([]);
 const modalError = ref('');
 const modalSuccess = ref('');
+const modoEdicao = ref(false);
+const formularioEditando = ref(null);
 
 const novoFormulario = ref({
   titulo: '',
@@ -195,10 +198,50 @@ const filtrarTurmasPorSemestre = () => {
 };
 
 const openAvaliacao = (id) => {
-    router.push(`/formulario/${id}`); 
+    const formulario = formularios.value.find(f => f.id === id);
+    if (formulario) {
+      editarFormulario(formulario);
+    }
+};
+
+const editarFormulario = (formulario) => {
+    modoEdicao.value = true;
+    formularioEditando.value = formulario;
+    
+    // Formatar datas para datetime-local (formato: YYYY-MM-DDTHH:mm)
+    const formatarDataParaInput = (dataString) => {
+      if (!dataString) return '';
+      const data = new Date(dataString);
+      const ano = data.getFullYear();
+      const mes = String(data.getMonth() + 1).padStart(2, '0');
+      const dia = String(data.getDate()).padStart(2, '0');
+      const hora = String(data.getHours()).padStart(2, '0');
+      const minuto = String(data.getMinutes()).padStart(2, '0');
+      return `${ano}-${mes}-${dia}T${hora}:${minuto}`;
+    };
+    
+    novoFormulario.value = {
+      titulo: formulario.titulo,
+      template_id: formulario.template_id,
+      turma_id: formulario.turma_id,
+      semestre: formulario.turma?.semestre || '',
+      data_inicio: formatarDataParaInput(formulario.data_inicio),
+      data_termino: formatarDataParaInput(formulario.data_termino)
+    };
+    
+    // Filtrar turmas pelo semestre
+    if (formulario.turma?.semestre) {
+      turmasFiltradas.value = turmas.value.filter(t => t.semestre === formulario.turma.semestre);
+    }
+    
+    showModal.value = true;
+    modalError.value = '';
+    modalSuccess.value = '';
 };
 
 const criarNovoFormulario = () => {
+    modoEdicao.value = false;
+    formularioEditando.value = null;
     showModal.value = true;
     modalError.value = '';
     modalSuccess.value = '';
@@ -206,6 +249,8 @@ const criarNovoFormulario = () => {
 
 const fecharModal = () => {
     showModal.value = false;
+    modoEdicao.value = false;
+    formularioEditando.value = null;
     novoFormulario.value = {
       titulo: '',
       template_id: '',
@@ -224,22 +269,46 @@ const submitFormulario = async () => {
     modalError.value = '';
     modalSuccess.value = '';
 
-    const response = await fetch('http://localhost:3001/formularios', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        formulario: novoFormulario.value
-      })
-    });
+    if (modoEdicao.value && formularioEditando.value) {
+      // Atualizar formulário existente (apenas datas)
+      const response = await fetch(`http://localhost:3001/formularios/${formularioEditando.value.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          formulario: {
+            data_inicio: novoFormulario.value.data_inicio,
+            data_termino: novoFormulario.value.data_termino
+          }
+        })
+      });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Erro ao criar formulário');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Erro ao atualizar formulário');
+      }
+
+      modalSuccess.value = 'Formulário atualizado com sucesso!';
+    } else {
+      // Criar novo formulário
+      const response = await fetch('http://localhost:3001/formularios', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          formulario: novoFormulario.value
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Erro ao criar formulário');
+      }
+
+      modalSuccess.value = 'Formulário criado com sucesso!';
     }
-
-    modalSuccess.value = 'Formulário criado com sucesso!';
     
     setTimeout(() => {
       fecharModal();
@@ -248,7 +317,7 @@ const submitFormulario = async () => {
 
   } catch (err) {
     modalError.value = err.message;
-    console.error('Erro ao criar formulário:', err);
+    console.error('Erro ao processar formulário:', err);
   }
 };
 
@@ -366,6 +435,13 @@ onMounted(() => {
   border-radius: 6px;
   font-size: 0.95rem;
   transition: border-color 0.2s;
+}
+
+.form-group input:disabled,
+.form-group select:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+  color: #666;
 }
 
 .form-group input:focus,
