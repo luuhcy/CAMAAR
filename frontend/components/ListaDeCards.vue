@@ -21,14 +21,23 @@ const error = ref(null);
 
 const formatFormularioToMateria = (formulario) => {
   const codigoTurma = formulario.turma?.codigo_sigaa || '';
+  const nomeTurma = formulario.turma?.nome || '';
   const titulo = formulario.titulo || 'Sem título';
-  const nomeComCodigo = codigoTurma ? `(${codigoTurma}) ${titulo}` : titulo;
+  
+  let nomeCompleto = '';
+  if (codigoTurma && nomeTurma) {
+    nomeCompleto = `(${codigoTurma}) ${nomeTurma} - ${titulo}`;
+  } else if (codigoTurma) {
+    nomeCompleto = `(${codigoTurma}) ${titulo}`;
+  } else {
+    nomeCompleto = titulo;
+  }
   
   return {
     id: formulario.id,
-    nome: nomeComCodigo,
+    nome: nomeCompleto,
     semestre: formulario.turma?.semestre || 'Semestre não especificado',
-    professor: formulario.template?.nome || 'Template não especificado'
+    professor: formulario.template?.nome ? `Template: ${formulario.template.nome}` : 'Template não especificado'
   };
 };
 
