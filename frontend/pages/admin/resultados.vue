@@ -154,8 +154,8 @@ const openTurmaDetails = async (turmaId) => {
     processedResults.value = [];
     
     try {
-        // Busca os detalhes da turma (esperando que o Rails retorne o formulário e as respostas aninhadas)
-        // Se o seu endpoint /turmas/:id não retornar as respostas, precisaremos ajustar o Rails
+        // Busca os detalhes da turma
+        
         const response = await fetch(`http://localhost:3001/turmas/${turmaId}`);
         const data = await response.json();
         
@@ -326,12 +326,12 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Layout Base */
+
 .resultados-container { max-width: 1000px; width: 100%; margin: 0 auto; padding: 20px; }
 .page-header { font-size: 1.8rem; color: #6C2365; margin-bottom: 5px; }
 .subtitle { color: #555; margin-bottom: 25px; }
 
-/* Grid de Turmas */
+
 .results-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
 .turma-card {
     background-color: white;
@@ -348,7 +348,7 @@ onMounted(() => {
 .stats { margin-top: 15px; font-size: 0.85rem; color: #8E24AA; font-weight: 600; }
 .ver-detalhes { text-decoration: underline; }
 
-/* Modal Overlay */
+
 .modal-overlay {
     position: fixed; top: 0; left: 0; right: 0; bottom: 0;
     background-color: rgba(0,0,0,0.5);
@@ -367,24 +367,24 @@ onMounted(() => {
 .modal-title { margin: 0; color: #6C2365; }
 .modal-subtitle { margin-top: 5px; color: #666; font-size: 0.9rem; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;}
 
-/* Resultados dentro do Modal */
+
 .questions-container { display: flex; flex-direction: column; gap: 30px; }
 .result-block { background-color: #f9f9f9; padding: 15px; border-radius: 6px; border: 1px solid #eee; }
 .question-header { margin-top: 0; font-size: 1rem; color: #333; margin-bottom: 15px; }
 
-/* Gráficos de Barra (CSS Puro) */
+
 .bar-row { display: flex; align-items: center; margin-bottom: 8px; font-size: 0.9rem; }
 .bar-label { width: 120px; text-align: right; padding-right: 10px; color: #555; }
 .bar-track { flex: 1; height: 20px; background-color: #e0e0e0; border-radius: 10px; overflow: hidden; margin-right: 10px; }
 .bar-fill { height: 100%; background-color: #8E24AA; transition: width 0.5s ease; }
 .bar-value { width: 60px; font-weight: bold; color: #333; }
 
-/* Lista de Comentários */
+
 .comments-list { display: flex; flex-direction: column; gap: 10px; max-height: 200px; overflow-y: auto; }
 .comment-item { background: white; padding: 10px; border-left: 3px solid #ccc; font-style: italic; color: #555; font-size: 0.9rem; }
 .no-comment { color: #999; font-style: italic; }
 
-/* Botão Exportar */
+
 .export-btn {
     width: 100%;
     margin-top: 20px;

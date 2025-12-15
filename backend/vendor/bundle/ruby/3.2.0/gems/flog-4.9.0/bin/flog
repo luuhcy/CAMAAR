@@ -1,0 +1,7 @@
+#!/usr/bin/env -S ruby -w
+
+require_relative "../lib/flog_cli"
+
+FlogCLI.run
+
+exit 0

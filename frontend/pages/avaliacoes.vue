@@ -133,7 +133,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* ... Mantenha seus estilos anteriores ... */
+
 * { box-sizing: border-box; }
 body { margin: 0; }
 .layout-container { display: flex; flex-direction: column; height: 100vh; font-family: sans-serif; background-color: #e0e0e0; }
@@ -155,7 +155,7 @@ nav li.active { background-color: #6C2365; color: white; font-weight: bold; }
 .card { background-color: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); height: 120px; display: flex; flex-direction: column; justify-content: center; transition: transform 0.2s; }
 .card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
 
-/* ESTILOS NOVOS PARA O LINK */
+
 .card-link { text-decoration: none; color: inherit; display: flex; flex-direction: column; justify-content: center; height: 100%; width: 100%; padding: 20px; }
 .subject-name { margin: 0 0 5px 0; font-size: 1.2rem; font-weight: bold; color: #333; }
 .turma-nome { margin: 0 0 5px 0; font-size: 0.9rem; color: #666; font-weight: 600; }

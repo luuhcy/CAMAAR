@@ -52,19 +52,18 @@ const handleCadastro = async () => {
     }
 
     try {
-        // --- MUDANÇA PRINCIPAL AQUI ---
-        // 1. URL aponta para o Rails (Porta 3001)
+        
         const response = await $fetch('http://localhost:3001/users', {
             method: 'POST',
             body: {
-                // 2. O Rails exige que os dados fiquem dentro de um objeto 'user'
+                
                 user: {
                     nome: nome.value,
                     matricula: matricula.value,
                     email: email.value,
                     password: password.value,
-                    password_confirmation: confirmPassword.value, // Envia a confirmação para o Rails validar
-                    tipo: 'user' // Define o padrão
+                    password_confirmation: confirmPassword.value, 
+                    tipo: 'user' 
                 }
             }
         });
@@ -73,9 +72,9 @@ const handleCadastro = async () => {
         router.push('/login');
 
     } catch (e) {
-        // Tratamento de erro melhorado para mostrar o que o Rails retornou
+        
         console.error(e);
-        // O Rails geralmente manda erros de validação (ex: email já existe)
+        
         error.value = 'Erro ao cadastrar. Verifique se o email ou matrícula já existem.';
     }
 };

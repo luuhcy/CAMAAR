@@ -1,17 +1,17 @@
 class RespostasController < ApplicationController
   before_action :set_resposta, only: %i[show update destroy]
 
-  # GET /respostas
+  
   def index
     render json: Respostum.all
   end
 
-  # GET /respostas/:id
+  
   def show
     render json: @resposta
   end
 
-  # POST /respostas
+  
   def create
     @resposta = Respostum.new(
       data_resposta: params[:resposta],
@@ -27,7 +27,7 @@ class RespostasController < ApplicationController
     end
   end
 
-  # PATCH/PUT /respostas/:id
+  
   def update
     if @resposta.update(resposta_params)
       render json: @resposta
@@ -36,7 +36,7 @@ class RespostasController < ApplicationController
     end
   end
 
-  # DELETE /respostas/:id
+  
   def destroy
     @resposta.destroy
     head :no_content

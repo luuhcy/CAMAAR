@@ -1,10 +1,10 @@
 class SessionsController < ApplicationController
-  # POST /login
+  
   def create
-    # Busca o usuário pelo email
+    
     user = User.find_by(email: params[:email])
 
-    # O método .authenticate verifica se a senha bate com a criptografia
+    
     if user && user.authenticate(params[:password])
       render json: { 
         message: "Login realizado!",

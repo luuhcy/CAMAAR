@@ -1,7 +1,7 @@
 class TurmasController < ApplicationController
   before_action :set_turma, only: %i[ show update destroy ]
 
-  # GET /turmas
+  
   def index
     @turmas = Turma.all
 
@@ -13,7 +13,7 @@ class TurmasController < ApplicationController
 
     @respostas = @formulario ? @formulario.respostas : []
 
-    # 3. Retornamos o JSON com as 3 partes: turma, formulário e respostas
+    
     render json: {
       turma: @turma,
       formulario: @formulario,
@@ -21,7 +21,7 @@ class TurmasController < ApplicationController
     }
   end
 
-  # POST /turmas
+  
   def create
     @turma = Turma.new(turma_params)
 
@@ -32,7 +32,7 @@ class TurmasController < ApplicationController
     end
   end
 
-  # PATCH/PUT /turmas/1
+  
   def update
     if @turma.update(turma_params)
       render json: @turma
@@ -41,18 +41,18 @@ class TurmasController < ApplicationController
     end
   end
 
-  # DELETE /turmas/1
+  
   def destroy
     @turma.destroy!
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
+    
     def set_turma
       @turma = Turma.find(params.expect(:id))
     end
 
-    # Only allow a list of trusted parameters through.
+    
     def turma_params
       params.expect(turma: [ :codigo_sigaa, :nome, :disciplina, :semestre, :ano ])
     end
