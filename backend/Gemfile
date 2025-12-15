@@ -39,6 +39,9 @@ group :development, :test do
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
   
+  # Code quality analysis [https://github.com/whitesmith/rubycritic]
+  gem "rubycritic", require: false
+  
   # --- GEMS PARA TESTE (RSpec) ---
   gem 'rspec-rails' 
   gem 'factory_bot_rails' 
