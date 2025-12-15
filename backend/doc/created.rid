@@ -1,0 +1,22 @@
+Mon, 15 Dec 2025 19:50:45 -0300
+app/controllers/admin/importar_controller.rb	Mon, 15 Dec 2025 18:50:44 -0300
+app/controllers/admin/imports_controller.rb	Sun, 14 Dec 2025 11:24:13 -0300
+app/controllers/application_controller.rb	Mon, 15 Dec 2025 19:17:25 -0300
+app/controllers/formularios_controller.rb	Mon, 15 Dec 2025 19:19:18 -0300
+app/controllers/questaos_controller.rb	Mon, 15 Dec 2025 19:19:55 -0300
+app/controllers/respostas_controller.rb	Mon, 15 Dec 2025 19:21:23 -0300
+app/controllers/sessions_controller.rb	Mon, 15 Dec 2025 19:22:14 -0300
+app/controllers/students_controller.rb	Mon, 15 Dec 2025 19:23:38 -0300
+app/controllers/templates_controller.rb	Mon, 15 Dec 2025 19:24:16 -0300
+app/controllers/turmas_controller.rb	Mon, 15 Dec 2025 19:25:09 -0300
+app/controllers/users_controller.rb	Mon, 15 Dec 2025 19:26:11 -0300
+app/jobs/application_job.rb	Sun, 14 Dec 2025 11:24:13 -0300
+app/mailers/application_mailer.rb	Sun, 14 Dec 2025 11:24:13 -0300
+app/models/application_record.rb	Mon, 15 Dec 2025 19:26:52 -0300
+app/models/formulario.rb	Mon, 15 Dec 2025 19:27:26 -0300
+app/models/questao.rb	Mon, 15 Dec 2025 19:27:55 -0300
+app/models/respostum.rb	Mon, 15 Dec 2025 19:28:31 -0300
+app/models/student.rb	Mon, 15 Dec 2025 19:29:21 -0300
+app/models/template.rb	Mon, 15 Dec 2025 19:29:52 -0300
+app/models/turma.rb	Mon, 15 Dec 2025 19:30:38 -0300
+app/models/user.rb	Mon, 15 Dec 2025 19:31:09 -0300
