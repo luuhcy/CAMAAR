@@ -43,11 +43,21 @@
           </div>
 
           <div class="form-group">
+            <label for="semestre">Semestre *</label>
+            <select id="semestre" v-model="novoFormulario.semestre" required @change="filtrarTurmasPorSemestre">
+              <option value="">Selecione um semestre</option>
+              <option v-for="semestre in semestresDisponiveis" :key="semestre" :value="semestre">
+                {{ semestre }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
             <label for="turma">Turma *</label>
-            <select id="turma" v-model="novoFormulario.turma_id" required>
+            <select id="turma" v-model="novoFormulario.turma_id" required :disabled="!novoFormulario.semestre">
               <option value="">Selecione uma turma</option>
-              <option v-for="turma in turmas" :key="turma.id" :value="turma.id">
-                {{ turma.codigo_sigaa }} - {{ turma.disciplina }} ({{ turma.semestre }})
+              <option v-for="turma in turmasFiltradas" :key="turma.id" :value="turma.id">
+                {{ turma.codigo_sigaa }} - {{ turma.disciplina }} - {{ turma.nome }}
               </option>
             </select>
           </div>
@@ -97,6 +107,8 @@ const error = ref(null);
 const showModal = ref(false);
 const templates = ref([]);
 const turmas = ref([]);
+const turmasFiltradas = ref([]);
+const semestresDisponiveis = ref([]);
 const modalError = ref('');
 const modalSuccess = ref('');
 
@@ -104,6 +116,7 @@ const novoFormulario = ref({
   titulo: '',
   template_id: '',
   turma_id: '',
+  semestre: '',
   data_inicio: '',
   data_termino: ''
 });
@@ -163,9 +176,22 @@ const fetchTurmas = async () => {
     const response = await fetch('http://localhost:3001/turmas');
     if (!response.ok) throw new Error('Erro ao buscar turmas');
     turmas.value = await response.json();
+    
+    // Extrair semestres únicos
+    const semestres = [...new Set(turmas.value.map(t => t.semestre))];
+    semestresDisponiveis.value = semestres.sort().reverse();
   } catch (err) {
     console.error('Erro ao buscar turmas:', err);
   }
+};
+
+const filtrarTurmasPorSemestre = () => {
+  if (novoFormulario.value.semestre) {
+    turmasFiltradas.value = turmas.value.filter(t => t.semestre === novoFormulario.value.semestre);
+  } else {
+    turmasFiltradas.value = [];
+  }
+  novoFormulario.value.turma_id = '';
 };
 
 const openAvaliacao = (id) => {
@@ -184,9 +210,11 @@ const fecharModal = () => {
       titulo: '',
       template_id: '',
       turma_id: '',
+      semestre: '',
       data_inicio: '',
       data_termino: ''
     };
+    turmasFiltradas.value = [];
     modalError.value = '';
     modalSuccess.value = '';
 };
@@ -233,10 +261,27 @@ onMounted(() => {
 
 <style scoped>
 .grid-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+  display: flex;
+  flex-wrap: wrap;
   gap: 25px;
   width: 100%;
+}
+
+.grid-container > * {
+  flex: 0 0 calc(33.333% - 17px);
+  min-width: 300px;
+}
+
+@media (max-width: 1200px) {
+  .grid-container > * {
+    flex: 0 0 calc(50% - 12.5px);
+  }
+}
+
+@media (max-width: 768px) {
+  .grid-container > * {
+    flex: 0 0 100%;
+  }
 }
 
 .card-criar {
