@@ -1,10 +1,5 @@
 <template>
   <div class="grid-container">
-    <!-- Card para criar novo formulário -->
-    <div class="card-criar" @click="criarNovoFormulario">
-      <span class="titulo-criar">Clique para criar um novo formulário</span>
-    </div>
-    
     <!-- Cards de formulários existentes -->
     <CardDeMateria 
       v-for="formulario in formularios" 
@@ -12,6 +7,11 @@
       :materia="formatFormularioToMateria(formulario)"
       @click="openAvaliacao(formulario.id)"
     />
+    
+    <!-- Card para criar novo formulário -->
+    <div class="card-criar" @click="criarNovoFormulario">
+      <span class="titulo-criar">Clique para criar um novo formulário</span>
+    </div>
   </div>
 </template>
 
@@ -100,19 +100,17 @@ onMounted(() => {
   align-items: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  border: 2px dashed #ccc;
 }
 
 .card-criar:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
-  border-color: #999;
 }
 
 .titulo-criar {
   font-size: 0.85rem;
   color: #333;
   text-align: center;
-  font-weight: 500;
+  font-weight: bold;
 }
 </style>
