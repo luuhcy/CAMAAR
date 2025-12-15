@@ -69,28 +69,7 @@ const materiaSemestre = ref('...');
 const submitError = ref('');
 const respostas = ref({});
 const loading = ref(true);
-
-// Perguntas do formulário
-const perguntas = ref([
-  {
-    titulo: '1. O professor entregou o plano de ensino da disciplina?',
-    tipo: 'multipla_escolha',
-    opcoes: ['Muito bom', 'Bom', 'Satisfatório', 'Ruim', 'Péssimo']
-  },
-  {
-    titulo: '2. Deixe um comentário geral sobre a matéria:',
-    tipo: 'texto'
-  },
-  {
-    titulo: '3. Qual a principal sugestão de melhoria?',
-    tipo: 'texto'
-  },
-  {
-    titulo: '4. Qualidade do material de apoio oferecido?',
-    tipo: 'multipla_escolha',
-    opcoes: ['Muito bom', 'Bom', 'Satisfatório', 'Ruim', 'Péssimo']
-  }
-]);
+const perguntas = ref([]);
 
 const formularioId = ref(null);
 const loadMateriaData = async (id) => {
@@ -107,6 +86,20 @@ const loadMateriaData = async (id) => {
 
     // Formulário
     formularioId.value = response.id
+
+    // Buscar questões do template
+    const templateId = response.template_id
+    const templateResponse = await $fetch(`http://localhost:3001/templates/${templateId}`)
+    
+    // Mapear questões para o formato do formulário
+    perguntas.value = templateResponse.questoes.map((q, index) => ({
+      id: q.id,
+      titulo: `${index + 1}. ${q.texto}`,
+      tipo: q.tipo === 'radio' ? 'multipla_escolha' : 'texto',
+      opcoes: q.tipo === 'radio' ? JSON.parse(q.opcoes) : [],
+      obrigatoria: q.obrigatoria
+    }))
+
   } catch (e) {
     console.error(e)
     submitError.value = 'Erro ao carregar o formulário.'
@@ -116,31 +109,30 @@ const loadMateriaData = async (id) => {
 }
 
 
-const submitForm = () => {
-  fetch('http://localhost:3001/respostas', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      resposta: respostas.value,
-      user_id: 1,
-      formulario_id: formularioId.value
-    })
-  })
-  .then(async response => {
-    if (!response.ok) {
-      const text = await response.text();
-      throw new Error(text);
-    }
-    return response.json();
-  })
-  .then(() => {
+const submitForm = async () => {
+  const userId = localStorage.getItem('userId');
+  
+  if (!userId) {
+    alert('Usuário não autenticado');
+    return;
+  }
+
+  try {
+    const response = await $fetch('http://localhost:3001/respostas', {
+      method: 'POST',
+      body: {
+        resposta: JSON.stringify(respostas.value),
+        user_id: parseInt(userId),
+        formulario_id: formularioId.value
+      }
+    });
+
     alert('Avaliação enviada com sucesso!');
-  })
-  .catch(() => {
+    router.push('/avaliacoes');
+  } catch (error) {
+    console.error('Erro ao enviar:', error);
     alert('Erro ao enviar avaliação');
-  });
+  }
 };
 
 

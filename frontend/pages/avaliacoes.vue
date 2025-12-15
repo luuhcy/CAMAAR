@@ -74,12 +74,18 @@ const fetchFormularios = async () => {
       return;
     }
 
-    // Buscar dados do estudante pela matrícula
-    const studentResponse = await $fetch(`http://localhost:3001/students`);
-    const student = studentResponse.find(s => s.matricula === userMatricula);
+    // Buscar todos os students
+    const studentsResponse = await $fetch(`http://localhost:3001/students`);
+    
+    // Encontrar o student pela matrícula (comparar como string)
+    const student = studentsResponse.find(s => String(s.matricula) === String(userMatricula));
 
-    if (!student) {
-      error.value = 'Estudante não encontrado';
+    if (!student || !student.turma_id) {
+      error.value = 'Estudante não encontrado ou sem turma vinculada';
+      console.log('Students disponíveis:', studentsResponse);
+      console.log('Student encontrado:', student);
+      console.log('Matrícula buscada:', userMatricula);
+      console.log('Tipo matrícula:', typeof userMatricula);
       return;
     }
 

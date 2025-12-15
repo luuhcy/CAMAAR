@@ -12,7 +12,8 @@ class SessionsController < ApplicationController
           id: user.id, 
           nome: user.nome, 
           email: user.email, 
-          tipo: user.tipo 
+          tipo: user.tipo,
+          matricula: user.matricula
         }
       }, status: :ok
     else

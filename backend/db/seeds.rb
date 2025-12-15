@@ -1,14 +1,14 @@
 # backend/db/seeds.rb
 
+#Popular o banco de dados com dados iniciais para desenvolvimento e testes, pode ser limpo mantendo o admin, pois há csv e json com dados de alunos.
+
 # Limpar dados na ordem correta (respeitar foreign keys)
 Formulario.destroy_all
 Questao.destroy_all
 Template.destroy_all
 Student.destroy_all
 Turma.destroy_all
-
-# Agora pode deletar o usuário admin sem violar constraints
-User.find_by(email: "admin@aluno.unb.br")&.destroy
+User.destroy_all
 
 User.create!(
   nome: "Admin",
