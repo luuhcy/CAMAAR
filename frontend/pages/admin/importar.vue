@@ -2,7 +2,7 @@
     <AdminLayout active-menu-id="gerenciamento">
         <div class="import-container">
             <h1 class="page-header">Importar Dados</h1>
-            <p class="subtitle">Faça o upload do arquivo CSV com as informações das turmas e alunos.</p>
+            <p class="subtitle">Faça o upload do arquivo CSV ou JSON com as informações das turmas e alunos.</p>
             
             <div class="import-card">
                 <h2>Selecione o Arquivo</h2>
@@ -14,12 +14,12 @@
                     :class="{ 'dragging': isDragging }"
                 >
                     <p v-if="fileName">{{ fileName }} ({{ fileSize }})</p>
-                    <p v-else>Arraste e solte o arquivo CSV aqui, ou clique para selecionar.</p>
+                    <p v-else>Arraste e solte o arquivo CSV ou JSON aqui, ou clique para selecionar.</p>
                     
                     <input 
                         type="file" 
                         ref="fileInput" 
-                        accept=".csv" 
+                        accept=".csv,.json" 
                         @change="handleFileChange" 
                         style="display: none;"
                     />
@@ -33,6 +33,15 @@
                 <div v-if="statusMessage" :class="['status-message', statusType]">
                     {{ statusMessage }}
                 </div>
+            </div>
+            
+            <div class="info-box">
+                <h3>Formatos Aceitos:</h3>
+                <ul>
+                    <li><strong>CSV:</strong> codigo_sigaa, nome_turma, disciplina, semestre, matricula_aluno, nome_aluno, email_aluno</li>
+                    <li><strong>JSON (classes.json):</strong> Lista de disciplinas com código, nome e informações da turma</li>
+                    <li><strong>JSON (class_members.json):</strong> Lista de turmas com alunos matriculados</li>
+                </ul>
             </div>
             
             <button class="btn-back" @click="goBack">Voltar ao Gerenciamento</button>
@@ -74,7 +83,7 @@ const handleDrop = (event) => {
 };
 
 const processFile = (file) => {
-    if (file && file.name.endsWith('.csv')) {
+    if (file && (file.name.endsWith('.csv') || file.name.endsWith('.json'))) {
         selectedFile.value = file;
         fileName.value = file.name;
         fileSize.value = (file.size / 1024).toFixed(2) + ' KB';
@@ -84,7 +93,7 @@ const processFile = (file) => {
         selectedFile.value = null;
         fileName.value = '';
         fileSize.value = '';
-        statusMessage.value = 'Formato inválido. Por favor, selecione um arquivo CSV.';
+        statusMessage.value = 'Formato inválido. Por favor, selecione um arquivo CSV ou JSON.';
         statusType.value = 'error';
     }
 };
@@ -115,7 +124,7 @@ const submitImport = async () => {
         fileSize.value = '';
         
     } catch (e) {
-        statusMessage.value = e.data?.message || e.message || 'Erro interno ao processar o arquivo CSV.';
+        statusMessage.value = e.data?.message || e.message || 'Erro interno ao processar o arquivo.';
         statusType.value = 'error';
     }
 };
@@ -146,6 +155,27 @@ const goBack = () => {
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
     text-align: center;
+}
+.info-box {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    text-align: left;
+}
+.info-box h3 {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+.info-box ul {
+    margin: 0;
+    padding-left: 20px;
+}
+.info-box li {
+    margin-bottom: 8px;
+    color: #555;
+    font-size: 0.9rem;
 }
 h2 {
     font-size: 1.2rem;
