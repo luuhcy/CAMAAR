@@ -110,3 +110,49 @@ Questao.create!(
 )
 
 puts "✅ Templates de avaliação criados com sucesso!"
+
+# FORMULÁRIOS - Vinculando Templates às Turmas
+
+puts "Criando formulários..."
+
+turma_cic = Turma.find_by(codigo_sigaa: "CIC0004")
+turma_mat = Turma.find_by(codigo_sigaa: "MAT0025")
+turma_fga = Turma.find_by(codigo_sigaa: "FGA0138")
+
+# Formulário 1: Avaliação Docente para CIC0004
+Formulario.create!(
+  titulo: "Avaliação do Professor - Algoritmos e Programação",
+  data_inicio: DateTime.new(2024, 12, 1, 0, 0, 0),
+  data_termino: DateTime.new(2024, 12, 31, 23, 59, 59),
+  template_id: template1.id,
+  turma_id: turma_cic.id
+)
+
+# Formulário 2: Avaliação Docente para MAT0025
+Formulario.create!(
+  titulo: "Avaliação do Professor - Cálculo 1",
+  data_inicio: DateTime.new(2024, 12, 1, 0, 0, 0),
+  data_termino: DateTime.new(2024, 12, 31, 23, 59, 59),
+  template_id: template1.id,
+  turma_id: turma_mat.id
+)
+
+# Formulário 3: Avaliação de Projeto para FGA0138
+Formulario.create!(
+  titulo: "Avaliação do Projeto Final - Métodos de Design",
+  data_inicio: DateTime.new(2025, 1, 15, 0, 0, 0),
+  data_termino: DateTime.new(2025, 2, 15, 23, 59, 59),
+  template_id: template2.id,
+  turma_id: turma_fga.id
+)
+
+# Formulário 4: Avaliação Docente para FGA0138 (turma também tem avaliação do professor)
+Formulario.create!(
+  titulo: "Avaliação do Professor - Métodos de Design",
+  data_inicio: DateTime.new(2025, 1, 1, 0, 0, 0),
+  data_termino: DateTime.new(2025, 1, 31, 23, 59, 59),
+  template_id: template1.id,
+  turma_id: turma_fga.id
+)
+
+puts "✅ Formulários criados e vinculados às turmas com sucesso!"
