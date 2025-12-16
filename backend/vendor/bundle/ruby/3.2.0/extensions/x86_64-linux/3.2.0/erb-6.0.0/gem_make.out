@@ -1,0 +1,26 @@
+current directory: /home/delma/Documentos/trab_eng_software/CAMAAR/backend/vendor/bundle/ruby/3.2.0/gems/erb-6.0.0/ext/erb/escape
+/usr/bin/ruby -I/usr/share/rubygems extconf.rb
+checking for rb_ext_ractor_safe() in ruby.h... yes
+creating Makefile
+
+current directory: /home/delma/Documentos/trab_eng_software/CAMAAR/backend/vendor/bundle/ruby/3.2.0/gems/erb-6.0.0/ext/erb/escape
+make DESTDIR\= sitearchdir\=./.gem.20251215-21045-68qn6r sitelibdir\=./.gem.20251215-21045-68qn6r clean
+rm -f 
+rm -fr escape.so false escape.o *.bak mkmf.log .*.time
+
+current directory: /home/delma/Documentos/trab_eng_software/CAMAAR/backend/vendor/bundle/ruby/3.2.0/gems/erb-6.0.0/ext/erb/escape
+make DESTDIR\= sitearchdir\=./.gem.20251215-21045-68qn6r sitelibdir\=./.gem.20251215-21045-68qn6r
+gcc -I. -I/usr/include -I/usr/include/ruby/backward -I/usr/include -I. -DHAVE_RB_EXT_RACTOR_SAFE    -fPIC -O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1   -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -fPIC -m64 -o escape.o -c escape.c
+rm -f escape.so
+gcc -shared -o escape.so escape.o -L. -L/usr/lib64 -L. -Wl,-z,relro -Wl,--as-needed  -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -fstack-protector-strong -rdynamic -Wl,-export-dynamic -Wl,--no-as-needed -Wl,-z,relro -Wl,--as-needed  -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1    -m64  -lruby  -lm -lpthread  -lc
+
+current directory: /home/delma/Documentos/trab_eng_software/CAMAAR/backend/vendor/bundle/ruby/3.2.0/gems/erb-6.0.0/ext/erb/escape
+make DESTDIR\= sitearchdir\=./.gem.20251215-21045-68qn6r sitelibdir\=./.gem.20251215-21045-68qn6r install
+/usr/bin/mkdir -p . ./.gem.20251215-21045-68qn6r/erb
+exit > .sitearchdir.-.erb.time
+/usr/bin/install -c -m 0755 escape.so ./.gem.20251215-21045-68qn6r/erb
+
+current directory: /home/delma/Documentos/trab_eng_software/CAMAAR/backend/vendor/bundle/ruby/3.2.0/gems/erb-6.0.0/ext/erb/escape
+make DESTDIR\= sitearchdir\=./.gem.20251215-21045-68qn6r sitelibdir\=./.gem.20251215-21045-68qn6r clean
+rm -f 
+rm -fr escape.so false escape.o *.bak mkmf.log .*.time

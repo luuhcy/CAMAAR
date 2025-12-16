@@ -2,7 +2,7 @@ require 'rails_helper'
 
 # Testes do controller de Sessions (login)
 RSpec.describe SessionsController, type: :request do
-  let!(:user) { User.create(email: 'test@example.com', password: 'password123', nome: 'Test') }
+  let!(:user) { User.create!(email: 'test@example.com', password: 'password123', nome: 'Test', tipo: 'aluno', matricula: '111111') }
 
   # Testa login com senha correta
   it 'faz login com sucesso' do
