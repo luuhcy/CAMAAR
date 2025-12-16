@@ -11,4 +11,7 @@
 class Questao < ApplicationRecord
   # Associação: Cada questão pertence obrigatoriamente a um Template.
   belongs_to :template
+  
+  validates :texto, presence: true
+  validates :tipo, presence: true
 end

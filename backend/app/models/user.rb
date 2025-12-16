@@ -21,4 +21,8 @@ class User < ApplicationRecord
 
   # Associação: Respostas submetidas por este usuário (geralmente Alunos).
   has_many :respostas
+  
+  validates :nome, presence: true
+  validates :email, presence: true, uniqueness: true
+  validates :matricula, presence: true, uniqueness: true
 end

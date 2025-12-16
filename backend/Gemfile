@@ -29,6 +29,9 @@ gem "thruster", require: false
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
 gem "rack-cors"
 
+# Documentation generator
+gem "rdoc"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
@@ -39,13 +42,12 @@ group :development, :test do
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
   
-  # Code quality analysis [https://github.com/whitesmith/rubycritic]
-  gem "rubycritic", require: false
-  
   # --- GEMS PARA TESTE (RSpec) ---
   gem 'rspec-rails' 
   gem 'factory_bot_rails' 
   # A gem 'shoulda-matchers' é útil para simplificar os testes de validação e associação
   gem 'shoulda-matchers', require: false
   gem 'rdoc', require: false
+  # Code coverage analysis
+  gem 'simplecov', require: false
 end

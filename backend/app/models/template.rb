@@ -19,7 +19,10 @@ class Template < ApplicationRecord
   # associadas a ele são apagadas automaticamente.
   # * +class_name+: 'Questao' (Define explicitamente o nome da classe do model).
   has_many :questoes, class_name: 'Questao', dependent: :destroy
+  has_many :questaos, class_name: 'Questao', dependent: :destroy
 
   # Associação: Pode ter gerado vários formulários de aplicação.
   has_many :formularios
+  
+  validates :nome, presence: true
 end
